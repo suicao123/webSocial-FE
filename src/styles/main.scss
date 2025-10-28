@@ -1,11 +1,193 @@
 
+$text-color: #333;
+$black-color: #000;
+$border-color: #ccc;
+$placeholder-color: #aaa;
+$valid-color: #00bfff;
+$white-color: #fff;
+$error-color: red;
+$button-auth-color: #00C4FF;
+
 * {
-    margin: 0px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* <-- THÊM DÒNG NÀY */
+    font-family: sans-serif;
 }
 
-.test {
+html, body {
     width: 100%;
-    height: 20px;
-    background-color: black;
-    color: white;
+    height: 100%;
+}
+
+//homePage (auth, home)-----------------------------------------------------------------------------
+
+#auth-container {
+    width: 100%;
+    height: 100dvh;
+
+    position: relative; /* Rất quan trọng: Để ::before có thể định vị tuyệt đối */
+    overflow: hidden; /* Ngăn chặn hiệu ứng mờ tràn ra ngoài */
+
+    /* Căn giữa Form rõ nét */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#auth-container::before {
+    content: ""; /* Bắt buộc phải có */
+    
+    /* Làm cho ::before lấp đầy toàn bộ #auth-container */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    /* Áp dụng ảnh nền */
+    background-image: url('https://res.cloudinary.com/dph0wgj0o/image/upload/v1761622921/loginPage_walksz.avif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* Làm mờ */
+    filter: blur(2px); 
+    
+    /* Đảm bảo ::before nằm dưới phần tử con (#auth-container-form) */
+    z-index: -1; 
+}
+
+#auth-container-nav {
+    width: 900px; /* Điều chỉnh kích thước */
+    height: 550px; /* Điều chỉnh kích thước */
+    border-radius: 20px;
+    background-color: $white-color;
+    
+    display: flex;
+}
+
+.auth-container-nav-form {
+    flex: 5.5;
+    background-color: $white-color;
+    display: flex;
+    justify-content: center;
+    border-radius: 20px;
+}
+
+.auth-container-nav-img {
+    flex: 4.5;
+    margin: 18px;
+    border-radius: 22px;
+    background-image: url('https://res.cloudinary.com/dph0wgj0o/image/upload/v1761622921/loginPage_walksz.avif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.auth-container-nav-form-auth {
+    width: 70%;
+    height: 100%;
+    background-color: $white-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .error-message {
+            visibility: hidden;
+            color: $error-color;
+
+            &.show {
+                visibility: visible;
+            }
+        }
+
+        h1 {
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .form-wrapper {
+                position: relative;
+                width: 100%;
+                display: flex;
+
+                .icon {
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                }
+            }
+
+            span {
+                font-size:18px;
+                color: $black-color;
+            }
+
+            input {
+                width: 100%;
+                border: none;
+                border-bottom: 2px solid;
+                outline: none;
+                padding: 8px 0;
+                font-size: 18px;
+                color: $placeholder-color;
+
+                &:focus {
+                    border-bottom-color: $valid-color;
+                }
+            }
+        }
+
+        .button {
+            margin-top: 28px;
+            width: 100%;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+
+            .button-left {
+                height: 42px;
+                border-radius: 20px;
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: $button-auth-color;
+
+                &:hover {
+                    box-shadow: 0 0 10px 0 $button-auth-color;
+                    transition: box-shadow 0.3s ease; /* Chỉ transition box-shadow */
+                    cursor: pointer;
+                }
+            }
+
+            .button-right {
+                height: 42px;
+                border-radius: 20px;
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 2px solid $button-auth-color;
+
+                &:hover {
+                    box-shadow: 0 0 10px 0 $button-auth-color;
+                    transition: box-shadow 0.3s ease; /* Chỉ transition box-shadow */
+                    cursor: pointer;
+                }
+            }
+        }
+    }
 }

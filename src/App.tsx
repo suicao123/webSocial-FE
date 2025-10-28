@@ -1,15 +1,13 @@
 
-import '../src/styles/main.scss'
+import HomePage from './pages/HomePage'
 
 function App() {
 
-  return (
-    <>
-      <div className="test">
-        Hello
-      </div>
-    </>
-  )
+    return (
+        <>
+            <HomePage />
+        </>
+    )
 }
 
 export default App
