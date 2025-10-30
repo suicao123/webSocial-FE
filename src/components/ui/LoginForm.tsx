@@ -39,22 +39,23 @@ function LoginForm( {
         if(!validateLogin(username, password)) {
 
             try {
-                const response = await fetch('http://localhost:8080/api/v1/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({username, password}),
-                });
+                // const response = await fetch('http://localhost:8080/api/v1/login', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({username, password}),
+                // });
 
-                // const data = await response.json();
+                // // const data = await response.json();
 
-                if (response.ok) {
-                    setHome((prev) => !prev)
-                }
+                // if (response.ok) {
+                //     setHome((prev) => !prev)
+                // }
+                setHome((prev) => !prev)
             }
             catch (error) {
-                alert('Lỗi đăng nhập');
+                alert(error);
             }
         }
     }

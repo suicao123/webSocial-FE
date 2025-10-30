@@ -1,7 +1,10 @@
+import Header from "../../../components/layout/Header"
 
 function Home() {
     return (
-        <div>Hi</div>
+        <div id="main-layout">
+            <Header />
+        </div>
     )
 }
 
