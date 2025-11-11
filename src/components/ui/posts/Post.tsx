@@ -1,23 +1,41 @@
 import { BiLike, BiSolidLike } from "react-icons/bi"
 import { FaRegCommentAlt } from "react-icons/fa"
 import { IoEllipsisHorizontalOutline } from "react-icons/io5"
+import type { typePost } from "../../../types/post"
 
-function Post() {
+function Post( {
+    dataPost
+} : {
+    dataPost: typePost
+} ) {
+    
+
     return (
         <div id="post">
             <div className="post-header">
-                <img src="https://res.cloudinary.com/dd0yqxowo/image/upload/v1761823049/user-default_jxnvbw.jpg" className="avatar-post-header" />
-                <IoEllipsisHorizontalOutline 
-                    className="icon"
-                />
+                <div className="post-header-left">
+                    <img src={dataPost.users_posts_user_idTousers.avatar_url} className="avatar-post-header" />
+                    <p>{dataPost.users_posts_user_idTousers.display_name}</p>
+                </div>
+                <div className="post-header-right">
+                    <IoEllipsisHorizontalOutline 
+                        className="icon"
+                    />
+                </div>  
             </div>
             <div className="post-content">
-                <p>Chào, hôm nay cùng kết thúc phần này nhé!!!</p>
-                <img src="https://res.cloudinary.com/dd0yqxowo/image/upload/v1761819380/photo-1633346887817-0a90c2ad1b90_ar4m0p.jpg" className="image"/>
+                <p>{dataPost.content}</p>
+                {
+                    dataPost.image_url?.map(img => {
+                        return (
+                            <img src={img} className="image"/>
+                        )
+                    })
+                }
             </div>
             <div className="post-interact-show">
-                <p>Lượt thích</p>
-                <p>Bình luận</p>
+                <p>{dataPost._count.post_likes} Lượt thích</p>
+                <p>{dataPost._count.comments} Bình luận</p>
             </div>
             <hr className="post-divider" />
             <div className="post-interact">

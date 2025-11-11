@@ -2,6 +2,10 @@ import { useState } from "react"
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { validateLogin } from "../../validation/auth";
 
+const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
+const HOST = import.meta.env.VITE_API_HOST || 'localhost';
+const PORT = import.meta.env.VITE_API_PORT || '8080';
+
 function LoginForm( {
     setAuth,
     setHome
@@ -39,20 +43,24 @@ function LoginForm( {
         if(!validateLogin(username, password)) {
 
             try {
-                // const response = await fetch('http://localhost:8080/api/v1/login', {
-                //     method: 'POST',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({username, password}),
-                // });
+                const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({username, password}),
+                });
 
-                // // const data = await response.json();
+                const data = await response.json();
+                
+                const { token } = data;
 
-                // if (response.ok) {
-                //     setHome((prev) => !prev)
-                // }
-                setHome((prev) => !prev)
+                localStorage.setItem('authToken', token);
+
+                if (data.success) {
+                    setHome((prev) => !prev)
+                }
+                // setHome((prev) => !prev)
             }
             catch (error) {
                 alert(error);
