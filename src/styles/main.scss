@@ -493,9 +493,7 @@ html, body {
     align-items: center;
 
     /* THÊM DÒNG NÀY ĐỂ TẠO HIỆU ỨNG MỜ */
-    backdrop-filter: blur(8px); /* Độ mờ 8px, bạn có thể chỉnh */
-    /* Để tương thích tốt hơn với Safari cũ, bạn có thể thêm tiền tố */
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(2px);
 
     .home-post-container {
         width: 30%;
@@ -611,6 +609,154 @@ html, body {
                 &:hover {
                     cursor: pointer;
                     background-color: color.adjust($background-color, $lightness: -2%);
+                }
+            }
+        }
+    }
+}
+
+//home comment
+.home-comment {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* THÊM DÒNG NÀY ĐỂ TẠO HIỆU ỨNG MỜ */
+    backdrop-filter: blur(2px);
+
+    .home-comment-container {
+        width: 50%;
+        max-height: 90%;
+        background-color: $white-color;
+        border-radius: 20px;
+
+        .home-comment-header {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            font-size: 26px;
+
+            p {
+                margin: 18px 0;
+            }
+
+            .icon {
+                background-color: $white-color;
+                font-size: 30px;
+                border-radius: 20px;
+                position: absolute;
+                right: 8px;
+
+                &:hover {
+                    cursor: pointer;
+                    background-color: color.adjust($white-color, $lightness: -2%);
+                }
+            }
+        }
+
+        .line {
+            border: none; /* Xóa style mặc định của trình duyệt */
+            border-top: 1px solid #e0e0e0; /* Tạo đường gạch 1px, màu xám nhạt */
+        }
+
+        .home-comment-main {
+            overflow-y: auto;
+            height: 500px;
+            
+            .home-comment-content {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                margin: 8px 20px 0;
+
+                .comment {
+                    display: flex;
+                    gap: 8px;
+                    justify-content: center;
+
+                    img {
+                        width: 30px;
+                        height: 30px;
+                        
+                        // Sửa ở đây: Dùng object-fit cho thẻ <img>
+                        object-fit: cover; 
+                        
+                        // Thêm cái này để làm tròn avatar
+                        border-radius: 50%;
+                    }
+
+                    .comment-data {
+                        display: flex;
+                        overflow-wrap: break-word;
+                        flex-direction: column;
+                        background-color: $input-color;
+                        width: 96%;
+                        border-radius: 20px;
+
+                        .data {
+                            margin: 8px 0 8px 12px;
+                            font-size: 18px;
+
+                            p:first-child{
+                                font-size: 15px;
+                                font-weight: bold;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .home-comment-footer {
+            display: flex;
+            margin: 10px 0;
+            justify-content: center;
+            gap: 8px;
+
+            img {
+                width: 30px;
+                height: 30px;
+                
+                // Sửa ở đây: Dùng object-fit cho thẻ <img>
+                object-fit: cover; 
+                
+                // Thêm cái này để làm tròn avatar
+                border-radius: 50%;
+            }
+
+            .home-comment-footer-content {
+                width: 88%;
+                background-color: $input-color;
+                border-radius: 20px;
+                display: flex;
+
+                textarea {
+                    margin: 12px;
+                    width: 90%;
+                    border: none;
+                    outline: none;
+                    background-color: $input-color;
+                    font-size: 18px;
+                    resize: none;
+                }
+
+                .icon {
+                    margin: 6px auto 0;
+
+                    &:hover {
+                        cursor: pointer;
+                        opacity: 0.6;
+                    }
                 }
             }
         }

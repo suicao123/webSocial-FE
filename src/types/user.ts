@@ -6,3 +6,10 @@ export interface typeUser {
     avatar_url: string;
     display_name: string;
 }
+
+export interface payload {
+    user_id: string,
+    username: string,
+    display_name: string,
+    email: string
+};

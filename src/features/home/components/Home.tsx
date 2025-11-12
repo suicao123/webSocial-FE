@@ -4,7 +4,9 @@ import Post from "../../../components/ui/posts/Post"
 import PostComposer from "../../../components/ui/posts/PostComposer"
 import type { typePost } from "../../../types/post";
 import HomePost from "./HomePost";
-import type { typeUser } from "../../../types/user";
+import { type payload, type typeUser } from "../../../types/user";
+import HomeComment from "./HomeComment";
+import { jwtDecode } from "jwt-decode";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -13,13 +15,22 @@ const PORT = import.meta.env.VITE_API_PORT || '8080';
 function Home() {
 
     const [dataPosts, setPosts] = useState<typePost[]>([]);
-    const [dataUser, setuser] = useState<typeUser | undefined>();
+    const [dataPost, setPost] = useState<typePost>();
+    const [dataUser, setUser] = useState<typeUser | undefined>();
     const [isPosting, setPosting] = useState<boolean>(false);
+    const [isCommenting, setCommenting] = useState<boolean>(false);
 
     useEffect(() => {
+
+        const token = localStorage.getItem('authToken');
+
         const getData = async () => {
             try {
-                const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts`);
+                const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts`, {
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    }
+                });
 
                 if (!dataApi.ok) {
                     alert(`Lỗi HTTP: ${dataApi.status}`);
@@ -34,11 +45,39 @@ function Home() {
             }
         }
 
+        let userToken = null;
+
+        if(token) {
+            userToken = jwtDecode<payload>(token);
+        }
+        
+        const userId = userToken?.user_id;
+        
+
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users?user_id=${userId}`);
+
+                if(!response.ok) {
+                    alert('Lấy người dùng không thành công')
+                }
+                else {
+                    const data = await response.json();
+                    
+                    setUser(data);
+                }
+
+            } catch (error) {
+                alert(error);
+            }
+        }
+
+        getUser();
         getData();
     }, []); 
 
     useEffect(() => {
-        if(isPosting) {
+        if(isPosting || isCommenting) {
             document.body.style.overflow = 'hidden';
         }
 
@@ -46,14 +85,25 @@ function Home() {
             document.body.style.overflow = 'auto';
         };
 
-    }, [isPosting]);
+    }, [isPosting || isCommenting]);
 
     return (
         <div id="main-layout">
-            { isPosting ? 
+            { 
+                isPosting ? 
                 <HomePost 
                     setPosting={setPosting}
                     dataUser={dataUser}
+                /> : 
+                "" 
+            }
+            { 
+                isCommenting ? 
+                <HomeComment 
+                    dataPost={dataPost}
+                    setPost = {setPost}
+                    setCommenting = {setCommenting}
+                    dataUser = {dataUser}
                 /> : 
                 "" 
             }
@@ -69,6 +119,8 @@ function Home() {
                             return (
                                 <Post
                                     dataPost = {data}
+                                    setPost = {setPost}
+                                    setCommenting = {setCommenting}
                                 />
                             )
                         })

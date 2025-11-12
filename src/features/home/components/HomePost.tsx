@@ -1,5 +1,5 @@
 import { IoMdClose } from "react-icons/io"
-import type { typeUser } from "../../../types/user";
+import type { payload, typeUser } from "../../../types/user";
 import { useEffect, useRef, useState } from "react";
 import { FaImages } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
@@ -7,13 +7,6 @@ import { jwtDecode } from "jwt-decode";
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
 const PORT = import.meta.env.VITE_API_PORT || '8080';
-
-interface payload {
-    user_id: string,
-    username: string,
-    display_name: string,
-    email: string
-};
 
 function HomePost( 
     { 
@@ -60,32 +53,36 @@ function HomePost(
         }
 
         try {
-            const formData = new FormData();
+            let uploadedImageUrls = [];
 
-            formData.append('content', content);
-            selectedFiles.forEach(file => {
-                formData.append('images', file);
-            });
+            if(selectedFiles.length !== 0) {
+                const formData = new FormData();
 
-            console.log(formData);
-            
+                formData.append('content', content);
+                selectedFiles.forEach(file => {
+                    formData.append('images', file);
+                });
 
-            const uploadRes = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/uploadImg`, {
-                method: 'POST',
-                headers: {
-                    'authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
+                console.log(formData);
+                
 
-            if(!uploadRes.ok) {
-                alert('upload thất bại!!!');
-                return;
+                const uploadRes = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/uploadImg`, {
+                    method: 'POST',
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if(!uploadRes.ok) {
+                    alert('upload thất bại!!!');
+                    return;
+                }
+
+                const uploadData = await uploadRes.json();
+
+                uploadedImageUrls = uploadData.data.map((img: { url: string }) => img.url);
             }
-
-            const uploadData = await uploadRes.json();
-
-            const uploadedImageUrls = uploadData.data.map((img: { url: string }) => img.url);
 
             const user = jwtDecode<payload>(token);
 
@@ -93,6 +90,7 @@ function HomePost(
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     user_id: user.user_id,
@@ -130,6 +128,7 @@ function HomePost(
         };
 
     }, [selectedFiles]);
+    
 
     return (
         <div className="home-post">
