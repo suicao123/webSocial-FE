@@ -1,19 +1,24 @@
-import { useState } from "react";
+
 import Auth from "../features/auth/components/Auth"
 import Home from "../features/home/components/Home";
+import { useAuth } from "../context/useAuth";
+import AdminPage from "./AdminPage";
 
 function HomePage() {
 
-    const [isHome, setHome] = useState<boolean>(false);
+    const { role, isAuthenticated, isLoading } = useAuth();
+    console.log(isAuthenticated);
+    
+    if (isLoading) {
+        return <div className="loading-screen">Đang tải...</div>; 
+    }
 
     return (
         <>
             {
-                isHome ?
-                <Home /> :
-                <Auth 
-                    setHome = {setHome}
-                />
+                isAuthenticated ?
+                role == 1 ? <Home /> : <AdminPage /> :
+                <Auth />
             }
         </>
     )

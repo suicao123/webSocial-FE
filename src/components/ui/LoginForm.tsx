@@ -1,23 +1,25 @@
 import { useState } from "react"
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { validateLogin } from "../../validation/auth";
+import { useAuth } from "../../context/useAuth";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
 const PORT = import.meta.env.VITE_API_PORT || '8080';
 
-function LoginForm( {
-    setAuth,
-    setHome
-} : {
-    setAuth: React.Dispatch<React.SetStateAction<boolean>>;
-    setHome: React.Dispatch<React.SetStateAction<boolean>>;
-} ) {
+function LoginForm( 
+    {
+        setAuth,
+    } : {
+        setAuth: React.Dispatch<React.SetStateAction<boolean>>;
+    } 
+) {
 
     const [isError, setError] = useState<boolean>(false);
     const [isHidden, setHidden] = useState<boolean>(true);
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const { login } = useAuth();
 
     function handleHiddenPass(): void {
         setHidden((prev) => !prev);
@@ -53,14 +55,14 @@ function LoginForm( {
 
                 const data = await response.json();
                 
-                const { token } = data;
-
-                localStorage.setItem('authToken', token);
-
-                if (data.success) {
-                    setHome((prev) => !prev)
+                // Kiểm tra xem server có báo thành công không
+                if (data.token) {
+                     const { token } = data;
+                     
+                     login(token); 
+                } else {
+                    alert(data.message || "Đăng nhập thất bại");
                 }
-                // setHome((prev) => !prev)
             }
             catch (error) {
                 alert(error);

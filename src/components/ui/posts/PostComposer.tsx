@@ -1,5 +1,12 @@
 
-function PostComposer( { setPosting } : { setPosting: React.Dispatch<React.SetStateAction<boolean>> } ) {
+function PostComposer( 
+    { 
+        setPosting
+    } : 
+    { 
+        setPosting: React.Dispatch<React.SetStateAction<boolean>> 
+    } 
+) {
 
     function handlePost() {
         setPosting((prev:boolean) => !prev);

@@ -2,7 +2,7 @@ import { BiLike, BiSolidLike } from "react-icons/bi"
 import { FaRegCommentAlt } from "react-icons/fa"
 import { IoEllipsisHorizontalOutline } from "react-icons/io5"
 import type { typePost } from "../../../types/post"
-import { useState } from "react"
+import { memo } from "react"
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -11,35 +11,83 @@ const PORT = import.meta.env.VITE_API_PORT || '8080';
 function Post( {
     dataPost,
     setPost,
-    setCommenting
+    setCommenting,
+    setRefreshKey
 } : {
     dataPost: typePost | undefined,
     setPost: React.Dispatch<React.SetStateAction<typePost | undefined>>,
-    setCommenting: React.Dispatch<React.SetStateAction<boolean>>
+    setCommenting: React.Dispatch<React.SetStateAction<boolean>>,
+    setRefreshKey: React.Dispatch<React.SetStateAction<number>>
 } ) {
 
-    const [like, setLike] = useState<boolean | undefined>(dataPost?.isLike);
+    // useEffect(() => {
+    //     setLike(dataPost?.isLike ?? false);
+    // }, []);
+
+    // 1. Tạo state nội bộ để hiển thị (QUAN TRỌNG)
+    // const [internalPost, setInternalPost] = useState<typePost | undefined>(dataPost);
+    // const [like, setLike] = useState<boolean>(internalPost?.isLike ?? false);
+    
+
+    // Cập nhật state nội bộ nếu cha truyền data mới vào (khi load trang lần đầu)
+    // useEffect(() => {
+    //     setInternalPost(dataPost);
+    // }, [dataPost]);
 
     function handleComment() {
         setPost(dataPost);
         setCommenting((prev) => !prev);
     }    
 
+    function handlieDelete() {
+        
+    }
+    
     async function handleLike() {
-        const token = localStorage.getItem('authToken');
-        setLike(prev => !prev);
 
-        const likePost = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/createLike/${dataPost?.post_id}`, {
-            method: 'POST',
-            headers: {
-                'authorization': `Bearer ${token}`
+        // if (!internalPost) return;
+
+        // // Lưu lại giá trị cũ để phòng trường hợp lỗi thì quay xe (revert)
+        // const previousPostData = { ...internalPost };
+        // const isCurrentlyLiked = internalPost.isLike;
+        // setLike(prev => !prev);
+        
+        // // --- BƯỚC QUAN TRỌNG NHẤT: CẬP NHẬT UI NGAY LẬP TỨC ---
+        // setInternalPost(prev => {
+        //     if (!prev) return undefined;
+        //     return {
+        //         ...prev,
+        //         isLike: !isCurrentlyLiked, // Đảo ngược trạng thái (Like -> Unlike)
+        //         _count: {
+        //             ...prev._count,
+        //             // Nếu đang like thì trừ 1, chưa like thì cộng 1
+        //             post_likes: isCurrentlyLiked ? prev._count.post_likes - 1 : prev._count.post_likes + 1
+        //         }
+        //     };
+        // });
+
+        try {
+            const token = localStorage.getItem('authToken');
+            const res = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/createLike/${dataPost?.post_id}`, {
+                method: 'POST',
+                headers: { 'authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) {
+                throw new Error("Like thất bại");
             }
-        })
-
-        if(!likePost.ok) {
-            alert('Lỗi like bài viết');
+            else {
+                setRefreshKey(prev => prev + 1);
+            }
+            // Nếu thành công: Không cần làm gì cả vì UI đã đúng rồi
+        } catch (error) {
+            // Nếu lỗi mạng hoặc server lỗi:
+            // Trả lại trạng thái cũ (Rollback)
+            // setInternalPost(previousPostData);
+            alert('Không thể thích bài viết lúc này!');
         }
     }
+    
 
     return (
         <div id="post">
@@ -49,9 +97,14 @@ function Post( {
                     <p>{dataPost?.users_posts_user_idTousers.display_name}</p>
                 </div>
                 <div className="post-header-right">
-                    <IoEllipsisHorizontalOutline 
-                        className="icon"
-                    />
+                    <div 
+                        className="post-header-icon"
+                        onClick={ handlieDelete }
+                    >
+                        <IoEllipsisHorizontalOutline 
+                            className="icon"
+                        />
+                    </div>
                 </div>  
             </div>
             <div className="post-content">
@@ -75,7 +128,7 @@ function Post( {
                     onClick={ handleLike }
                 >
                     {
-                        like ? <BiSolidLike 
+                        dataPost?.isLike ? <BiSolidLike 
                             className="icon"
                         /> :
                         <BiLike 
@@ -98,4 +151,4 @@ function Post( {
     )
 }
 
-export default Post
+export default memo(Post)

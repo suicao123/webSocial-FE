@@ -2,7 +2,7 @@ import { useState } from "react"
 import LoginForm from "../../../components/ui/LoginForm"
 import SignupForm from "../../../components/ui/SignupForm";
 
-function Auth( {setHome} : {setHome: React.Dispatch<React.SetStateAction<boolean>>;} ) {
+function Auth() {
 
     const [isAuth, setAuth] = useState<boolean>(true);
 
@@ -15,7 +15,6 @@ function Auth( {setHome} : {setHome: React.Dispatch<React.SetStateAction<boolean
                             isAuth ? 
                             <LoginForm 
                                 setAuth = {setAuth}
-                                setHome = {setHome}
                             /> : 
                             <SignupForm 
                                 setAuth = {setAuth}

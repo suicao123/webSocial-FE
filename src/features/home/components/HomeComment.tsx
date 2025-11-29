@@ -4,23 +4,26 @@ import Post from "../../../components/ui/posts/Post";
 import type { typeComment, typePost } from "../../../types/post";
 import { IoMdClose, IoMdSend } from "react-icons/io";
 import type { typeUser } from "../../../types/user";
+import { io } from "socket.io-client";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
 const PORT = import.meta.env.VITE_API_PORT || '8080';
+
+const SOCKET_URL = `${PROTOCOL}://${HOST}:${PORT}`;
 
 function HomeComment(
     {
         dataPost,
         setPost,
         setCommenting,
-        dataUser
+        dataUser,
     } :
     {
         dataPost: typePost | undefined
         setPost: React.Dispatch<React.SetStateAction<typePost | undefined>>,
         setCommenting: React.Dispatch<React.SetStateAction<boolean>>
-        dataUser: typeUser | undefined
+        dataUser: typeUser | undefined,
     }
 ) {
 
@@ -63,8 +66,42 @@ function HomeComment(
         fetchComments();
     }, []);
 
+
+    useEffect(() => {
+
+        const postId = dataPost?.post_id;
+        
+        // 1. Khởi tạo socket ngay trong useEffect
+        // Biến này chỉ tồn tại trong phạm vi của lần chạy effect này
+        const newSocket = io(SOCKET_URL);
+
+        if (postId) {
+            // Join room
+            newSocket.emit("join_post", postId.toString());
+        }
+
+        // Lắng nghe sự kiện
+        newSocket.on("new_comment_created", (newComment: typeComment) => {
+            console.log("Socket nhận comment mới:", newComment);
+            
+            setComments((prev) => {
+                return [...prev, newComment];
+            });
+        });
+
+        // Cleanup function: Chạy khi component unmount hoặc postId đổi
+        return () => {
+            newSocket.disconnect(); // Ngắt kết nối socket này
+        };
+    }, []);
+
     async function handleComment() {
         try {
+            token = localStorage.getItem('authToken');
+
+            console.log(token);
+            
+            
             const user_id = dataUser?.user_id;
             const post_id = dataPost?.post_id;
             const content = commentValue;
@@ -81,6 +118,9 @@ function HomeComment(
                     user_id: user_id
                 })
             })
+
+            console.log(comment);
+            
 
             if (!comment.ok) {
                 alert('Đăng bài thất bại!!');

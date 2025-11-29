@@ -20,6 +20,8 @@ function Home() {
     const [isPosting, setPosting] = useState<boolean>(false);
     const [isCommenting, setCommenting] = useState<boolean>(false);
 
+    const [refreshKey, setRefreshKey] = useState<number>(0);
+
     useEffect(() => {
 
         const token = localStorage.getItem('authToken');
@@ -74,7 +76,7 @@ function Home() {
 
         getUser();
         getData();
-    }, []); 
+    }, [refreshKey]); 
 
     useEffect(() => {
         if(isPosting || isCommenting) {
@@ -94,6 +96,8 @@ function Home() {
                 <HomePost 
                     setPosting={setPosting}
                     dataUser={dataUser}
+                    // onPostSuccess={() => setRefreshKey(prev => prev + 1)}
+                    setRefreshKey={setRefreshKey}
                 /> : 
                 "" 
             }
@@ -121,6 +125,7 @@ function Home() {
                                     dataPost = {data}
                                     setPost = {setPost}
                                     setCommenting = {setCommenting}
+                                    setRefreshKey={setRefreshKey}
                                 />
                             )
                         })

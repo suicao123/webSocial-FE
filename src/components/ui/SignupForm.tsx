@@ -2,7 +2,13 @@ import { useState } from "react";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { validateSignup } from "../../validation/auth";
 
-function SignupForm( {setAuth} : {setAuth: React.Dispatch<React.SetStateAction<boolean>>;} ) {
+const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
+const HOST = import.meta.env.VITE_API_HOST || 'localhost';
+const PORT = import.meta.env.VITE_API_PORT || '8080';
+
+function SignupForm( 
+    {setAuth} : {setAuth: React.Dispatch<React.SetStateAction<boolean>>;} 
+) {
 
     const [isError, setError] = useState<boolean>(false);
     const [isHidden, setHidden] = useState<boolean>(true);

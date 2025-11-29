@@ -11,11 +11,14 @@ const PORT = import.meta.env.VITE_API_PORT || '8080';
 function HomePost( 
     { 
         setPosting,
-        dataUser
+        dataUser,
+        setRefreshKey,
     } : 
     { 
         setPosting: React.Dispatch<React.SetStateAction<boolean>>,
-        dataUser: typeUser | undefined
+        dataUser: typeUser | undefined,
+        // onPostSuccess: () => void;
+        setRefreshKey: React.Dispatch<React.SetStateAction<number>>,
     } 
 ) {
 
@@ -101,6 +104,29 @@ function HomePost(
 
 
             if(posted.ok) {
+
+                // const completePost = {
+                //     ...data,
+                    
+                //     // 1. Map thông tin User vào đúng cái tên biến dài loằng ngoằng kia
+                //     users_posts_user_idTousers: {
+                //         user_id: dataUser?.user_id,
+                //         display_name: dataUser?.display_name,
+                //         avatar_url: dataUser?.avatar_url
+                //     },
+
+                //     // 2. Khởi tạo bộ đếm like/comment bằng 0 để không bị lỗi undefined
+                //     _count: {
+                //         post_likes: 0,
+                //         comments: 0
+                //     },
+
+                //     // 3. Đảm bảo image_url luôn là mảng (backend trả về null thì mình ép về [])
+                //     image_url: data.image_url || [] 
+                // };
+                // onPostSuccess();
+                setRefreshKey(prev => prev += 1);
+                
                 alert('Đăng bài thành công!!!');
             }
             else {
