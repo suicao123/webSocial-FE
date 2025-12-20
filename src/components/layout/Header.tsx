@@ -2,13 +2,21 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react"
 import { CiChat1, CiSearch } from "react-icons/ci"
 import { MdHome } from "react-icons/md"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import type { payload } from "../../types/user";
 import { useAuth } from "../../context/useAuth";
+import { FiLogOut } from "react-icons/fi";
+import { FaUserFriends } from "react-icons/fa";
 
-function Header() {
+function Header(
+    {menuId}:
+    {menuId: number}
+) {
 
     const [userId, setUserId] = useState<string | undefined>();
+    const [menu, setMenu] = useState<boolean>(false);
+    const [isActionMenu, setActionMenu] = useState<number>(menuId);
+    const navigate = useNavigate();
 
     const { logout } = useAuth();
 
@@ -31,6 +39,11 @@ function Header() {
         logout();
     }
 
+    function handleMenu(path: string, n: number) {
+        navigate(`${path}`);
+        setActionMenu(n);
+    }
+
     return (
         <header id="main-header">
             <div className="main-header-left">
@@ -46,26 +59,58 @@ function Header() {
                 </div>
             </div>
             <div className="main-header-center">
-                <div className="icon-main-header-center show">
-                    <Link to="/">
-                        <MdHome
-                            className="icon"
-                        />
-                    </Link>
-                </div>
-            </div>
-            <div className="main-header-right">
                 <div 
-                    className="chat-main-header-right"
-                    onClick={ handleLogout }
+                    className={`icon-main-header-center ${isActionMenu == 1 ? 'show' : ''}`}
+                    onClick={ () => handleMenu("/", 1) }
+                >
+                    <MdHome
+                        className="icon"
+                    />
+                </div>
+                <div 
+                    className={`icon-main-header-center ${isActionMenu == 2 ? 'show' : ''}`}
+                    onClick={ () => handleMenu("/friends", 2) }
+                >
+                    <FaUserFriends
+                        className="icon"
+                    />
+                </div>
+                <div 
+                    className={`icon-main-header-center ${isActionMenu == 3 ? 'show' : ''}`}
+                    onClick={ () => handleMenu("/chat", 3) }
                 >
                     <CiChat1
                         className="icon"
                     />
                 </div>
-                <Link to={`/profile/${userId}`}>
-                    <div className="avatar-user-header"></div>
-                </Link>
+            </div>
+            <div className="main-header-right">
+                <div 
+                    className="chat-main-header-right"
+                >
+                    <CiChat1
+                        className="icon"
+                    />
+                </div>
+                <div 
+                    className="avatar-user-header"
+                    onMouseEnter={ () => setMenu(true) }
+                    onMouseLeave={ () => setMenu(false) }
+                ></div>
+                
+                <div 
+                    className="main-header-menu"
+                    onMouseEnter={ () => setMenu(true) }
+                    onMouseLeave={ () => setMenu(false) }
+                    onClick={ handleLogout }
+                >
+                    <div 
+                        className={`item ${menu ? 'show' : ''}`}
+                    >
+                        <FiLogOut />
+                        <p>Đăng xuất</p>
+                    </div>
+                </div>
             </div>
         </header>
     )

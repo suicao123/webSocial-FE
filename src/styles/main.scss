@@ -212,6 +212,7 @@ html, body {
     display: flex;
     align-items: center;
     position: sticky;
+    z-index: 999;
     top: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
@@ -257,7 +258,7 @@ html, body {
 
     .main-header-center {
         display: flex;
-        gap: 6px;
+        gap: 2px;
         flex: 1;
         justify-content: center;
         align-items: center;
@@ -298,6 +299,37 @@ html, body {
         justify-content: end;
         align-items: center;
         flex: 1;
+        position: relative;
+
+        .main-header-menu {
+            position: absolute;
+            right: 20px;
+            width: 250px;
+            bottom: -39px;
+            background-color: $white-color;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            .item {
+                display: none;
+
+                &:hover {
+                    background-color: $gray-color;
+                    cursor: pointer;
+                }
+
+                &.show {
+                    display: flex;
+                    margin: 6px 9px;
+                    gap: 6px;
+                    padding: 8px;
+                    border-radius: 10px;
+                }
+            }
+        }
 
         .chat-main-header-right {
             width: 39px;
@@ -325,6 +357,7 @@ html, body {
             border-radius: 50%;
 
             &:hover {
+                cursor: pointer;
                 opacity: 0.6;
             }
         }
@@ -378,6 +411,10 @@ html, body {
         height: 39px;
         border-radius: 50%;
         margin: 20px 0 20px 20px;
+
+        &:hover {
+            opacity: 0.7;
+        }
     }
 
     .input-post-composer {
@@ -431,6 +468,10 @@ html, body {
                 height: 39px;
                 border-radius: 50%;
                 margin: 20px;
+
+                &:hover {
+                    opacity: 0.7;
+                }
             }
         }
 
@@ -438,6 +479,7 @@ html, body {
             flex: 1;
             display: flex;
             justify-content: end;
+            position: relative;
 
             .post-header-icon {
                 height: 30px;
@@ -454,6 +496,36 @@ html, body {
                 &:hover {
                     cursor: pointer;
                     background-color: $gray-color;
+                }
+    
+            }
+
+            .post-header-menu {
+                position: absolute;
+                right: 0;
+                width: 250px;
+                bottom: -50px;
+                background-color: $white-color;
+                border-radius: 10px;
+                box-shadow: 0 2px 15px 6px rgba(0, 0, 0, 0.1);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .item {
+                    display: none;
+
+                    &:hover {
+                        cursor: pointer;
+                        background-color: $gray-color;
+                    }
+
+                    &.show {
+                        display: flex;
+                        margin: 10px;
+                        padding: 8px;
+                        border-radius: 8px;
+                    }
                 }
             }
         }
@@ -1255,49 +1327,463 @@ html, body {
     }
 }
 
-/* Container để căn vị trí tương đối */
-.container {
-  position: relative;
-  margin: 50px; /* Cách lề để dễ nhìn */
+// /* Container để căn vị trí tương đối */
+// .container {
+//   position: relative;
+//   margin: 50px; /* Cách lề để dễ nhìn */
+// }
+
+// /* Cái hộp Menu chính */
+// .menu-box {
+//   position: absolute;
+//   top: 30px; /* Khoảng cách từ nút 3 chấm xuống */
+//   right: 0;  /* Căn phải */
+//   width: 300px;
+//   background-color: #fff;
+//   border-radius: 8px; /* Bo góc tròn như ảnh */
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Đổ bóng */
+//   padding: 16px;
+//   border: 1px solid #eee; /* Viền mờ nếu cần */
+// }
+
+// /* --- ĐÂY LÀ PHẦN TẠO CÁI GÓC NHỌN --- */
+// .menu-box::before {
+//   content: "";
+//   position: absolute;
+  
+//   /* Kích thước của mũi tên */
+//   width: 12px;
+//   height: 12px;
+  
+//   /* Màu nền PHẢI GIỐNG màu của menu-box */
+//   background-color: #fff; 
+  
+//   /* Tạo vị trí: Đưa nó lên trên cùng */
+//   top: -7px; /* Một nửa chiều cao (hoặc điều chỉnh cho khớp) */
+//   right: 16px; /* Căn chỉnh vị trí mũi tên theo chiều ngang */
+  
+//   /* Xoay 45 độ để biến hình vuông thành hình thoi/tam giác */
+//   transform: rotate(45deg);
+  
+//   /* Tạo đường viền cho mũi tên (để khớp với viền của hộp) */
+//   border-top: 1px solid #eee;
+//   border-left: 1px solid #eee;
+  
+//   /* Nếu menu có đổ bóng, mũi tên cũng cần đổ bóng nhẹ để khớp (tùy chọn) */
+//   /* box-shadow: -2px -2px 5px rgba(0,0,0,0.05); */
+// }
+
+//---------------------------------------friendPage-----------------------------
+#friend-page {
+    background-color: $gray-color;
+    min-height: 100vh;
+
+    .friend-container {
+        display: flex;
+
+        .friend-page-menu {
+            background-color: $white-color;
+            width: 390px;
+            box-shadow: 0 2px 15px 6px rgba(0, 0, 0, 0.1);
+
+            .menu-items {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin: 16px;
+
+                p:first-child {
+                    font-weight: bold;
+                    font-size: 22px;
+                }
+
+                .item {
+                    display: flex;
+                    gap: 6px;
+                    padding: 20px;
+                    border-radius: 10px;
+
+                    &:hover {
+                        background-color: $gray-color;
+                        cursor: pointer;
+                    }
+
+                    &.show {
+                        background-color: rgba($background-color, 0.1);
+                        color: $background-color;
+                    }
+                }
+            }
+        }
+
+        .friend-page-list {
+            margin: 20px;
+            height: 90vh;
+            flex: 1;
+            overflow-y: auto;
+
+            .list-items {
+
+                .lists {
+                    display: grid;
+                    width: 100%;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 16px;
+
+                    .item {
+                        // display: flex;
+                        // flex-direction: column;
+                        // background-color: $white-color;
+                        // gap: 8px;
+                        // border-radius: 20px;
+
+                        display: flex;
+                        flex-direction: column;
+                        background-color: $white-color;
+                        border-radius: 20px; // Bo góc cho cả thẻ
+                        overflow: hidden;    // QUAN TRỌNG: Để ảnh không bị tràn ra khỏi góc bo
+                        box-shadow: 0 1px 2px rgba(0,0,0,0.1); // Thêm chút bóng cho đẹp
+
+                        img {
+                            width: 100%;        // 2. Bắt buộc ảnh rộng bằng 100% cột chứa nó
+                            aspect-ratio: 1/1;  // 3. Giữ tỉ lệ vuông (1:1) bất kể ảnh gốc hình gì
+                            object-fit: cover;  // 4. Cắt ảnh để lấp đầy khung vuông mà không bị méo hình
+                            display: block;     // Xóa khoảng trắng thừa dưới chân ảnh
+                            border-radius: 20px 20px 0 0;
+                        }
+
+                        .content {
+                            margin: 10px;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 8px;
+
+                            .accept {
+                                background-color: $background-color;
+                                color: $white-color;
+                                padding: 10px;
+                                border-radius: 10px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                &:hover {
+                                    opacity: 0.7;
+                                    cursor: pointer;
+                                }
+                            }
+
+                            .reject {
+                                background-color: $gray-color;
+                                color: $black-color;
+                                padding: 10px;
+                                border-radius: 10px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                &:hover {
+                                    opacity: 0.7;
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .line {
+                    height: 2px;
+                    background-color: rgb(176, 179, 184);
+                    margin: 20px 0;
+                }
+
+                .list-add {
+                    display: grid;
+                    width: 100%;
+                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                    gap: 16px;
+
+                    .item {
+                        // display: flex;
+                        // flex-direction: column;
+                        // background-color: $white-color;
+                        // gap: 8px;
+                        // border-radius: 20px;
+
+                        display: flex;
+                        flex-direction: column;
+                        background-color: $white-color;
+                        border-radius: 10px; // Bo góc cho cả thẻ
+                        overflow: hidden;    // QUAN TRỌNG: Để ảnh không bị tràn ra khỏi góc bo
+                        box-shadow: 0 1px 2px rgba(0,0,0,0.1); // Thêm chút bóng cho đẹp
+
+                        img {
+                            width: 100%;        // 2. Bắt buộc ảnh rộng bằng 100% cột chứa nó
+                            aspect-ratio: 1/1;  // 3. Giữ tỉ lệ vuông (1:1) bất kể ảnh gốc hình gì
+                            object-fit: cover;  // 4. Cắt ảnh để lấp đầy khung vuông mà không bị méo hình
+                            display: block;     // Xóa khoảng trắng thừa dưới chân ảnh
+                            border-radius: 20px 20px 0 0;
+                        }
+
+                        .content {
+                            margin: 10px;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 8px;
+
+                            .add {
+                                background-color: $background-color;
+                                color: $white-color;
+                                padding: 10px;
+                                border-radius: 10px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                &:hover {
+                                    opacity: 0.7;
+                                    cursor: pointer;
+                                }
+                            }
+
+                            .cancel {
+                                background-color: $input-color;
+                                color: $black-color;
+                                padding: 10px;
+                                border-radius: 10px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+
+                                &:hover {
+                                    opacity: 0.7;
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .context {
+                    font-weight: bold;
+                    font-size: 22px;
+                    margin-bottom: 20px;
+                }
+            }
+        }
+    }
 }
 
-/* Cái hộp Menu chính */
-.menu-box {
-  position: absolute;
-  top: 30px; /* Khoảng cách từ nút 3 chấm xuống */
-  right: 0;  /* Căn phải */
-  width: 300px;
-  background-color: #fff;
-  border-radius: 8px; /* Bo góc tròn như ảnh */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Đổ bóng */
-  padding: 16px;
-  border: 1px solid #eee; /* Viền mờ nếu cần */
-}
+//chat-page
+#chat-page {
+    background-color: $gray-color;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 
-/* --- ĐÂY LÀ PHẦN TẠO CÁI GÓC NHỌN --- */
-.menu-box::before {
-  content: "";
-  position: absolute;
-  
-  /* Kích thước của mũi tên */
-  width: 12px;
-  height: 12px;
-  
-  /* Màu nền PHẢI GIỐNG màu của menu-box */
-  background-color: #fff; 
-  
-  /* Tạo vị trí: Đưa nó lên trên cùng */
-  top: -7px; /* Một nửa chiều cao (hoặc điều chỉnh cho khớp) */
-  right: 16px; /* Căn chỉnh vị trí mũi tên theo chiều ngang */
-  
-  /* Xoay 45 độ để biến hình vuông thành hình thoi/tam giác */
-  transform: rotate(45deg);
-  
-  /* Tạo đường viền cho mũi tên (để khớp với viền của hộp) */
-  border-top: 1px solid #eee;
-  border-left: 1px solid #eee;
-  
-  /* Nếu menu có đổ bóng, mũi tên cũng cần đổ bóng nhẹ để khớp (tùy chọn) */
-  /* box-shadow: -2px -2px 5px rgba(0,0,0,0.05); */
-}
+    .chat-container {
+        flex: 1;
+        display: flex;
 
+        .chat-list-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 550px;
+
+            .chat-list {
+                background-color: $white-color;
+                width: 95%;
+                height: 92%;
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+
+                >p {
+                    margin: 20px;
+                    font-weight: bold;
+                    font-size: 28px;
+                }
+
+                .search {
+                    background-color: $input-color;
+                    margin: 0 20px 20px;
+                    height: 46px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 20px;
+
+                    input {
+                        border: none;
+                        background-color: $input-color;
+                        outline: none;
+                        width: 420px;
+                        font-size: 18px;
+                        margin-left: 8px;
+                    }
+
+                    .icon {
+                        font-size: 22px;
+                    }
+                }
+
+                .line {
+                    height: 2px;
+                    background-color: rgb(176, 179, 184, 0.3);
+                    margin: 0 20px;
+                }
+
+                .item {
+                    margin: 0 20px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+
+                    .avatar {
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        width: 50px;
+                        height: 50x;
+                        border-radius: 50%;
+                        margin: 12px;
+                    }
+
+                    &:hover {
+                        cursor: pointer;
+                        background-color: $gray-color;
+                    }
+
+                    &.show {
+                        background-color: $gray-color;
+                    }
+                }
+            }
+        }
+
+        .chat-box-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+
+            .chat-box {
+                background-color: $white-color;
+                width: 95%;
+                height: 92%;
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+
+                .chat-box-header {
+                    height: 58px;
+                    border-radius: 10px 10px 0 0 ;
+                    box-shadow: 0 8px 6px 0 $gray-color;
+                    display: flex;
+                    align-items: center;
+
+                    .chat-box-user {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border-radius: 10px;
+                        margin-left: 10px;
+                        margin-top: 10px;
+                        margin-bottom: 10px;
+
+                        .avatar {
+                            background-size: cover;
+                            background-repeat: no-repeat;
+                            background-position: center;
+                            width: 38px;
+                            height: 38px;
+                            border-radius: 50%;
+                            margin: 6px;
+                        }
+
+                        p {
+                            margin: 9px;
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                            background-color: $gray-color;
+                        }
+                    }
+                }
+
+                .box-message {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column-reverse;
+                    overflow-y: auto;
+                    max-height: 500px;
+
+                    .another-message {
+                        display: flex;
+                        margin: 1px 10px;
+                        .message {
+                            width: fit-content;
+                            background-color: $gray-color;
+                            border-radius: 20px;
+                            p {
+                                padding: 10px;
+                            }
+                        }
+                    }
+
+                    .my-message {
+                        display: flex;
+                        justify-content: end;
+                        margin: 1px 10px;
+                        .message {
+                            width: fit-content;
+                            background-color: $background-color;
+                            color: $white-color;
+                            border-radius: 20px;
+                            p {
+                                padding: 10px;
+                            }
+                        }
+                    }
+                }
+
+
+                .input-message {
+                    margin: 0 10px;
+                    border-radius: 20px;
+                    display: flex;
+
+                    .input {
+                        background-color: $input-color;
+                        border-radius: 20px;
+                        display: flex;
+                        width: 100%;
+                        margin: 10px 0;
+                        align-items: center;
+
+                        input {
+                            border: none;
+                            background-color: $input-color;
+                            outline: none;
+                            font-size: 18px;
+                            margin-left: 8px;
+                            margin: 10px 20px;
+                            width: 90%;
+                        }
+
+                        .icon {
+                            margin: 6px auto 0;
+
+                            &:hover {
+                                cursor: pointer;
+                                opacity: 0.6;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

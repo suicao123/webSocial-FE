@@ -61,7 +61,7 @@ function Home() {
                 const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users?user_id=${userId}`);
 
                 if(!response.ok) {
-                    alert('Lấy người dùng không thành công')
+                    alert('Lấy người dùng không thành công');
                 }
                 else {
                     const data = await response.json();
@@ -108,10 +108,13 @@ function Home() {
                     setPost = {setPost}
                     setCommenting = {setCommenting}
                     dataUser = {dataUser}
+                    setRefreshKey = {setRefreshKey}
                 /> : 
                 "" 
             }
-            <Header />
+            <Header 
+                menuId={1}
+            />
             <div id="main-layout-home">
                 <div className="main-layout-home-left"></div>
                 <div className="main-layout-home-center">

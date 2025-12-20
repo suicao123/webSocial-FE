@@ -9,6 +9,7 @@ import HomeComment from "../features/home/components/HomeComment";
 import { useParams } from "react-router";
 import MenuAbout from "../features/profile/components/MenuAbout";
 import MenuFriendShip from "../features/profile/components/MenuFriendShip";
+import { useAuth } from "../context/useAuth";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -23,6 +24,8 @@ function ProfilePage() {
     const [isPosting, setPosting] = useState<boolean>(false);
     const [isCommenting, setCommenting] = useState<boolean>(false);
     const { user_id } = useParams();
+    const { user } = useAuth();
+    const myId = user?.user_id;
 
     const [activeMenu, setActiveMenu] = useState<number>(0);
 
@@ -34,10 +37,21 @@ function ProfilePage() {
         const getPosts = async () => {
             try {
                 const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/postsProfile/${user_id}`, {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'authorization': `Bearer ${token}`
-                    }
+                    },
+                    body: JSON.stringify({myId, user_id}),
                 });
+
+                // const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/login`, {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({username, password}),
+                // });
 
                 if (!dataApi.ok) {
                     alert(`Lỗi HTTP: ${dataApi.status}`);
@@ -73,7 +87,11 @@ function ProfilePage() {
         const getFriends = async () => {
             try {
                 
-                const friendList = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getFriends/${user_id}`);
+                const friendList = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getFriends/${user_id}`, {
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    }
+                });
 
                 if(!friendList.ok) {
                     alert('Lấy danh sách bạn bè không thành công');
@@ -117,10 +135,13 @@ function ProfilePage() {
                     setPost = {setPost}
                     setCommenting = {setCommenting}
                     dataUser = {dataUser}
+                    setRefreshKey = {setRefreshKey}
                 /> : 
                 "" 
             }
-            <Header />
+            <Header 
+                menuId={0}
+            />
             <div className="profile-header">
                 <div className="profile-header-top">
                     <div className="profile-header-left">

@@ -18,12 +18,14 @@ function HomeComment(
         setPost,
         setCommenting,
         dataUser,
+        setRefreshKey
     } :
     {
         dataPost: typePost | undefined
         setPost: React.Dispatch<React.SetStateAction<typePost | undefined>>,
         setCommenting: React.Dispatch<React.SetStateAction<boolean>>
         dataUser: typeUser | undefined,
+        setRefreshKey: React.Dispatch<React.SetStateAction<number>>
     }
 ) {
 
@@ -162,6 +164,7 @@ function HomeComment(
                         dataPost={dataPost}
                         setPost={setPost}
                         setCommenting={setCommenting}
+                        setRefreshKey={setRefreshKey}
                     />
 
                     <div className="line"></div>

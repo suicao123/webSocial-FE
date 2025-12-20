@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+import { useAuth } from "../../../context/useAuth";
 
 function PostComposer( 
     { 
@@ -12,9 +14,14 @@ function PostComposer(
         setPosting((prev:boolean) => !prev);
     }
 
+    const { user } = useAuth();
+
     return (
         <div id="post-composer">
-            <div className="avatar-post-composer"></div>
+            <Link to={`/profile/${user?.user_id}`}>
+                <div className="avatar-post-composer"></div>
+            </Link>
+            
             <div 
                 className="input-post-composer"
                 onClick={ handlePost }

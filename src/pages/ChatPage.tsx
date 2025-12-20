@@ -1,0 +1,183 @@
+import { CiSearch } from "react-icons/ci"
+import Header from "../components/layout/Header"
+import { IoMdSend } from "react-icons/io"
+import { useEffect, useState } from "react";
+import type { typeFriends } from "../types/user";
+import { useAuth } from "../context/useAuth";
+import ChatBox from "../features/chat/components/ChatBox";
+
+const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
+const HOST = import.meta.env.VITE_API_HOST || 'localhost';
+const PORT = import.meta.env.VITE_API_PORT || '8080';
+
+function ChatPage() {
+
+    const [dataFriends, setFriends] = useState<typeFriends[]>();
+    const [dataPartner, setPartner] = useState<typeFriends>();
+    const [dataMessages, setMessages] = useState<any[]>();
+    const [conversationId, setConversationId] = useState<BigInt>();
+    const { user } = useAuth();
+
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+
+        const getFriends = async () => {
+            try {
+                
+                const friendList = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getFriends/${user?.user_id}`, {
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    }
+                });
+
+                if(!friendList.ok) {
+                    alert('Lấy danh sách bạn bè không thành công');
+                }
+                else {
+                    const data = await friendList.json();
+
+                    setFriends(data.data);
+                }
+
+            } catch (error) {
+                alert(error);
+            }
+        }
+
+        getFriends();
+    }, []);
+
+    const openConsersation = async (partner_id: string) => {
+        try {
+            const token = localStorage.getItem('authToken');
+
+            let conversation_id: bigint = BigInt (0) ;
+            
+            const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/chat/create/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    partner_id: partner_id // Ví dụ: friendId là 2
+                }),
+            });
+
+            if(!dataApi.ok) {
+                alert('Mở cuộc trò chuyện thất bại');
+            }
+            else {
+                const data = await dataApi.json();
+                conversation_id = data.data.conversation_id;
+                setConversationId(conversation_id);
+
+                setPartner(data.data.formattedPartner);
+            }
+
+            const dataMsg = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/chat/getMessages/${conversation_id}`, {
+                headers: {
+                    'authorization': `Bearer ${token}`
+                },
+            });
+
+            if(!dataMsg.ok) {
+                alert('Xem cuộc trò chuyện thất bại');
+            }
+            else {
+                const data = await dataMsg.json();
+
+                setMessages(data);
+            }
+
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    return (
+        <div id="chat-page">
+            <Header 
+                menuId = {3}
+            />
+            <div className="chat-container">
+                <div className="chat-list-container">
+                    <div className="chat-list">
+                        <p>Chat</p>
+                        <div className="search">
+                            <CiSearch
+                                className="icon"
+                            />
+                            <input 
+                                type="text" 
+                                placeholder="Tìm kiếm"
+                            />
+                        </div>
+                        <div className="line"></div>
+                        {
+                            dataFriends?.map(data => {
+                                return (
+                                    <div 
+                                        className="item"
+                                        onClick={ () => openConsersation(data.user_id) }
+                                    >
+                                        <img src={`${data.avatar_url}`} className="avatar" />
+                                        <p>{data.display_name}</p>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </div>
+
+                <ChatBox 
+                    dataMessages={dataMessages}
+                    dataPartner={dataPartner}
+                    conversationId={conversationId}
+                    setMessages={setMessages}
+                />
+                {/* <div className="chat-box-container">
+                    <div className="chat-box">
+                        <div className="chat-box-header">
+                            <div className="chat-box-user">
+                                <img src={`${dataPartner?.avatar_url}`} className="avatar" />
+                                <p>{dataPartner?.display_name}</p>
+                            </div>
+                        </div>
+
+                        <div className="box-message">
+                            {
+                                dataMessages?.slice().reverse().map(data => {    
+                                    const isMine = data.sender_id == user?.user_id;
+                                    return (
+                                        <div className={`${isMine ? 'my-message' : 'another-message'}`}>
+                                            <div className="message">
+                                                <p>{data.content}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+
+                        <div className="input-message">
+                            <div className="input">
+                                <input 
+                                    type="text" 
+                                    placeholder="Gửi tin nhắn"
+                                />
+                                <IoMdSend
+                                    className="icon"
+                                    size={22}
+                                    // onClick={ handleComment }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div> */}
+            </div>
+        </div>
+    )
+}
+
+export default ChatPage

@@ -2,7 +2,10 @@ import { BiLike, BiSolidLike } from "react-icons/bi"
 import { FaRegCommentAlt } from "react-icons/fa"
 import { IoEllipsisHorizontalOutline } from "react-icons/io5"
 import type { typePost } from "../../../types/post"
-import { memo } from "react"
+import { memo, useState } from "react"
+import { useAuth } from "../../../context/useAuth"
+import { RiDeleteBin5Fill } from "react-icons/ri"
+import { Link } from "react-router"
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -34,13 +37,36 @@ function Post( {
     //     setInternalPost(dataPost);
     // }, [dataPost]);
 
+    const { user } = useAuth();
+    const [menu, setMenu] = useState<boolean>(false);
+
     function handleComment() {
         setPost(dataPost);
         setCommenting((prev) => !prev);
     }    
 
-    function handlieDelete() {
-        
+    async function handleDelete() {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
+            return;
+        }
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/delete/${dataPost?.post_id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if(!response.ok) {
+                alert("Xóa bài viết thất bại");
+            }
+            else {
+                setRefreshKey(prev => prev += 1);
+            }
+        } catch (error) {
+            alert(error);
+        }
     }
     
     async function handleLike() {
@@ -93,19 +119,38 @@ function Post( {
         <div id="post">
             <div className="post-header">
                 <div className="post-header-left">
-                    <img src={dataPost?.users_posts_user_idTousers.avatar_url} className="avatar-post-header" />
+                    <Link to={`/profile/${dataPost?.user_id}`}>
+                        <img src={dataPost?.users_posts_user_idTousers.avatar_url} className="avatar-post-header" />
+                    </Link>
                     <p>{dataPost?.users_posts_user_idTousers.display_name}</p>
                 </div>
                 <div className="post-header-right">
+                    {
+                        user?.user_id == dataPost?.user_id ?
+                        <div 
+                            className="post-header-icon"
+                            onMouseEnter={ () => setMenu(true) }
+                            onMouseLeave={ () => setMenu(false) }
+                        >
+                            <IoEllipsisHorizontalOutline 
+                                className="icon"
+                            />
+                        </div> : ''
+                    }
                     <div 
-                        className="post-header-icon"
-                        onClick={ handlieDelete }
+                        className="post-header-menu"
+                        onMouseEnter={ () => setMenu(true) }
+                        onMouseLeave={ () => setMenu(false) }
                     >
-                        <IoEllipsisHorizontalOutline 
-                            className="icon"
-                        />
+                        <div 
+                            className={`item ${menu ? 'show' : ''}`}
+                            onClick={ handleDelete }
+                        >
+                            <RiDeleteBin5Fill />
+                            <p>Xóa bài viết</p>
+                        </div>
                     </div>
-                </div>  
+                </div> 
             </div>
             <div className="post-content">
                 <p>{dataPost?.content}</p>
