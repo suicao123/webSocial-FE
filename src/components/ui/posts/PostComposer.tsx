@@ -1,12 +1,15 @@
 import { Link } from "react-router";
 import { useAuth } from "../../../context/useAuth";
+import type { typeUser } from "../../../types/user";
 
 function PostComposer( 
     { 
-        setPosting
+        setPosting,
+        dataUser
     } : 
     { 
-        setPosting: React.Dispatch<React.SetStateAction<boolean>> 
+        setPosting: React.Dispatch<React.SetStateAction<boolean>> ,
+        dataUser: typeUser | undefined
     } 
 ) {
 
@@ -19,7 +22,9 @@ function PostComposer(
     return (
         <div id="post-composer">
             <Link to={`/profile/${user?.user_id}`}>
-                <div className="avatar-post-composer"></div>
+                <div className="avatar-post-composer">
+                    <img src={dataUser?.avatar_url} alt="" />
+                </div>
             </Link>
             
             <div 

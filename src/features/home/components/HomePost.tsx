@@ -66,9 +66,6 @@ function HomePost(
                     formData.append('images', file);
                 });
 
-                console.log(formData);
-                
-
                 const uploadRes = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/uploadImg`, {
                     method: 'POST',
                     headers: {

@@ -138,7 +138,7 @@ function Post( {
                         </div> : ''
                     }
                     <div 
-                        className="post-header-menu"
+                        className={`post-header-menu ${menu ? 'show' : ''}`}
                         onMouseEnter={ () => setMenu(true) }
                         onMouseLeave={ () => setMenu(false) }
                     >

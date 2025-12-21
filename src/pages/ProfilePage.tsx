@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../components/layout/Header"
 import type { typeFriends, typeUser } from "../types/user"
 import type { typePost } from "../types/post";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdPersonAddAlt1 } from "react-icons/md";
 import MenuPost from "../features/profile/components/MenuPost";
 import HomePost from "../features/home/components/HomePost";
 import HomeComment from "../features/home/components/HomeComment";
@@ -10,6 +10,11 @@ import { useParams } from "react-router";
 import MenuAbout from "../features/profile/components/MenuAbout";
 import MenuFriendShip from "../features/profile/components/MenuFriendShip";
 import { useAuth } from "../context/useAuth";
+import { FaUserCheck, FaUserClock } from "react-icons/fa";
+import { FaUserXmark } from "react-icons/fa6";
+import PostComposer from "../components/ui/posts/PostComposer";
+import Post from "../components/ui/posts/Post";
+import EditProfile from "../features/profile/components/EditProfile";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -23,7 +28,10 @@ function ProfilePage() {
     const [dataFriends, setFriends] = useState<typeFriends[]>();
     const [isPosting, setPosting] = useState<boolean>(false);
     const [isCommenting, setCommenting] = useState<boolean>(false);
-    const { user_id } = useParams();
+    const [btnAction, setBtnAction] = useState<string>('');
+    const [menu, setMenu] = useState<boolean>(false);
+    const [isEdit, setEdit] = useState<boolean>(false);
+    const { user_id } = useParams();    
     const { user } = useAuth();
     const myId = user?.user_id;
 
@@ -107,10 +115,216 @@ function ProfilePage() {
             }
         }
 
+        const getStatus = async () => {
+            try {
+                const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getFriendshipStatus/${user_id}`, {
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    }
+                });
+
+                if(response.ok) {
+                    const data = await response.json();
+                    setBtnAction(data);
+                }
+
+            } catch (error) {
+                alert(error);
+            }
+        }
+
         getPosts();
         getUser();
         getFriends();
-    }, [refreshKey]);
+        getStatus();
+    }, [refreshKey, user_id]);
+
+    async function handleAddFriend() {
+        const target_user_id = user_id;
+        const token = localStorage.getItem('authToken');
+
+        const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/sendFriendRequest`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({target_user_id}),
+        });
+
+        if(!dataApi.ok) {
+            alert('Gủi kết bạn thất bại');
+        }
+        else {
+            setRefreshKey(prev => prev + 1);
+        }
+
+    }
+
+    async function handleCancelRequest() {
+
+        const token = localStorage.getItem('authToken');
+        const target_user_id = user_id;
+
+        const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/cancelFriendRequest`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({target_user_id}),
+        });
+
+        if(!dataApi.ok) {
+            alert('Hủy kết bạn thất bại');
+        }
+        else {
+            setRefreshKey(prev => prev + 1);
+        }
+    }
+
+    async function handleAcceptRequest(id: any) {
+        const token = localStorage.getItem('authToken');
+        const target_user_id = id;
+
+        const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/acceptFriendRequest`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({target_user_id}),
+        });
+
+        if (!dataApi.ok) {
+            alert('Kết bạn thất bại');
+        }
+        else {
+            setRefreshKey(prev => prev + 1);
+        }
+    }
+
+    async function handleDenyRequest() {
+
+        const token = localStorage.getItem('authToken');
+        const target_user_id = user_id;
+
+        const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/cancelFriendRequest`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({target_user_id}),
+        });
+
+        if(!dataApi.ok) {
+            alert('Hủy kết bạn thất bại');
+        }
+        else {
+            setRefreshKey(prev => prev + 1);
+        }
+    }
+
+    async function handleUnfriend() {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa kết bạn?")) {
+            return;
+        }
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/unfriend/${user_id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if(!response.ok) {
+                alert("Xóa kết bạn thất bại");
+            }
+            else {
+                setRefreshKey(prev => prev += 1);
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    const renderActionButton = () => {
+        switch (btnAction) {
+            case 'NOT_FRIEND':
+                return (
+                    <div 
+                        className="button-edit-profile" 
+                        onClick={handleAddFriend}
+                    >
+                        <MdPersonAddAlt1 />
+                        <p>Thêm bạn bè</p>
+                    </div>
+                );
+
+            case 'REQUEST_SENT':
+                return (
+                    <div 
+                        className="button-friended-profile" 
+                        onClick={handleCancelRequest}
+                    >
+                        <FaUserClock />
+                        <p>Đã gửi</p>
+                    </div>
+                );
+
+            case 'REQUEST_RECEIVED':
+                return (
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <div 
+                            className="button-edit-profile" 
+                            onClick={() => handleAcceptRequest(user_id)}
+                        >
+                            <MdPersonAddAlt1 />
+                            <p>Đồng ý</p>
+                        </div>
+                        <div 
+                            className="button-friended-profile" 
+                            onClick={handleDenyRequest}
+                        >
+                            <FaUserXmark />
+                            <p>Từ chối</p>
+                        </div>
+                    </div>
+                );
+
+            case 'accepted': // Hoặc 'FRIEND' tùy backend trả về
+                return (
+                    <div>
+                        <div 
+                            className="button-friended-profile"
+                            onMouseEnter={ () => setMenu(true) }
+                            onMouseLeave={ () => setMenu(false) }
+                        >
+                            <FaUserCheck />
+                            <p>Bạn bè</p>
+                        </div>
+                        <div 
+                            className={`dropdown ${menu ? 'show' : ''}`}
+                            onMouseEnter={ () => setMenu(true) }
+                            onMouseLeave={ () => setMenu(false) }
+                        >
+                            <div 
+                                className={`item ${menu ? 'show' : ''}`}
+                                onClick={handleUnfriend}
+                            >
+                                <FaUserXmark />
+                                <p>Hủy kết bạn</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            default:
+                return null;
+        }
+    };
 
     function handleMenu(menuIndex: number) {
         setActiveMenu(menuIndex);
@@ -118,6 +332,15 @@ function ProfilePage() {
     
     return (
         <div id="main-layout-profile">
+            {
+                isEdit ? 
+                <EditProfile 
+                    setEdit = {setEdit}
+                    dataUser = {dataUser}
+                    setRefreshKey = {setRefreshKey}
+                /> :
+                ''
+            }
             { 
                 isPosting ? 
                 <HomePost
@@ -152,10 +375,19 @@ function ProfilePage() {
                         </div>
                     </div>
                     <div className="profile-header-right">
-                        <div className="button-edit-profile">
-                            <MdEdit />
-                            <p>Chỉnh sửa trang cá nhân</p>
-                        </div>
+                        {
+                            btnAction == 'SELF' ?
+                            <div 
+                                className="button-edit-profile"
+                                onClick={ () => setEdit(prev => !prev) }
+                            >
+                                <MdEdit />
+                                <p>Chỉnh sửa trang cá nhân</p>
+                            </div> :
+                            <div>
+                                {renderActionButton()}
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className="profile-header-bottom">
@@ -184,14 +416,42 @@ function ProfilePage() {
             </div>
             <div className="profile-layout-content">
                 {
+                    // activeMenu == 0 ?
+                    // <MenuPost 
+                    //     setPosting={setPosting}
+                    //     dataPosts={dataPosts}
+                    //     setCommenting={setCommenting}
+                    //     setPost={setPost}
+                    //     setRefreshKey={setRefreshKey}
+                    // /> : 
+                    // ''
+
                     activeMenu == 0 ?
-                    <MenuPost 
-                        setPosting={setPosting}
-                        dataPosts={dataPosts}
-                        setCommenting={setCommenting}
-                        setPost={setPost}
-                        setRefreshKey={setRefreshKey}
-                    /> : 
+                    <div className="profile-container">
+                        <div className="profile-container-main">
+                            {
+                                myId == user_id ? 
+                                <PostComposer 
+                                    setPosting={setPosting}
+                                    dataUser = {dataUser}
+                                /> : ''
+                            }
+                            {
+                                dataPosts.map(data => {
+                                    console.log(data);
+                                    
+                                    return (
+                                        <Post
+                                            dataPost={data}
+                                            setPost={setPost}
+                                            setCommenting={setCommenting}
+                                            setRefreshKey={setRefreshKey}
+                                        />
+                                    )
+                                })
+                            }
+                        </div>
+                    </div> : 
                     ''
                 }
                 {

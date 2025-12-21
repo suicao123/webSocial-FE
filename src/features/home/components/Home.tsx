@@ -120,6 +120,7 @@ function Home() {
                 <div className="main-layout-home-center">
                     <PostComposer 
                         setPosting={setPosting}
+                        dataUser = {dataUser}
                     />
                     {
                         dataPosts.map((data) => {

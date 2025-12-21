@@ -1,16 +1,23 @@
-import { memo } from "react"
+import { memo, type Dispatch } from "react"
 import { CiSearch } from "react-icons/ci"
 import { IoEllipsisHorizontalOutline } from "react-icons/io5"
 import type { typeFriends } from "../../../types/user"
+import { useNavigate } from "react-router"
 
 function MenuFriendShip(
     {
-        dataFriends
+        dataFriends,
     } :
     {
-        dataFriends: typeFriends[] | undefined
+        dataFriends: typeFriends[] | undefined,
     }
 ) {
+
+    const navigate = useNavigate();
+
+    function handleClickImg(id: any) {
+        navigate(`/profile/${id}`);
+    }
 
     return (
         <div className="profile-layout-friendships">
@@ -41,18 +48,21 @@ function MenuFriendShip(
                     dataFriends?.map(friend => {
                         return (
                             <div className="item">
-                            <div className="item-container">
-                                <div className="left">
-                                    <img src={friend.avatar_url } />
-                                    <p>{friend.display_name}</p>
-                                </div>
-                                <div className="right">
-                                    <IoEllipsisHorizontalOutline 
-                                        className="icon"
-                                    />
+                                <div className="item-container">
+                                    <div className="left">
+                                        <img 
+                                            src={friend.avatar_url } 
+                                            onClick={() => handleClickImg(friend.user_id)}
+                                        />
+                                        <p>{friend.display_name}</p>
+                                    </div>
+                                    <div className="right">
+                                        <IoEllipsisHorizontalOutline 
+                                            className="icon"
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         )
                     })
                 }

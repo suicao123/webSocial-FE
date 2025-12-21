@@ -1,9 +1,10 @@
 import { useState } from "react"
 import type { typeUser } from "../../../types/user";
+import { useNavigate } from "react-router";
 
-const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
-const HOST = import.meta.env.VITE_API_HOST || 'localhost';
-const PORT = import.meta.env.VITE_API_PORT || '8080';
+const PROTOCOL:string = import.meta.env.VITE_API_PROTOCOL || 'http';
+const HOST:string = import.meta.env.VITE_API_HOST || 'localhost';
+const PORT:string = import.meta.env.VITE_API_PORT || '8080';
 
 
 function RequestBox(
@@ -12,6 +13,7 @@ function RequestBox(
 ) {
 
     const [isSend, setSend]= useState<boolean>(true);
+    const navigate = useNavigate();
 
     async function handleSendRequest() {
         const target_user_id = user?.user_id;
@@ -54,9 +56,16 @@ function RequestBox(
         setSend(prev => !prev)
     }
 
+    function handleClickImg(id: any) {
+        navigate(`/profile/${id}`);
+    }
+
     return (
         <div className="item">
-            <img src={`${user?.avatar_url}`} />
+            <img 
+                src={`${user?.avatar_url}`} 
+                onClick={() => handleClickImg(user?.user_id)}
+            />
             <div className="content">
                 <p>{user?.display_name}</p>
                 {
