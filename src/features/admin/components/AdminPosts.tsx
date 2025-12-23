@@ -168,7 +168,7 @@ function AdminPosts() {
                     </thead>
                     <tbody>
                     {
-                        dataPosts.map((post) => {
+                        dataPosts?.map((post) => {
                             return (
                             <tr>
                                 <td className="author-cell">

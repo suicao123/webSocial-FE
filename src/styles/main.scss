@@ -1484,6 +1484,7 @@ html, body {
         
         border: 1px solid transparent;
         transition: all 0.2s ease;
+        margin-bottom: 30px; 
 
         &:focus-within {
             background-color: #fff;
@@ -1519,7 +1520,6 @@ html, body {
         max-height: 500px;
         overflow-x: auto;
 
-        // Làm đẹp thanh cuộn (tùy chọn)
         &::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -1536,7 +1536,6 @@ html, body {
             
             thead {
                 th {
-                    // ... các thuộc tính cũ giữ nguyên ...
                     text-align: left;
                     padding: 12px 16px;
                     font-size: 14px;
@@ -1544,15 +1543,12 @@ html, body {
                     font-weight: 600;
                     border-bottom: 2px solid $border-color;
 
-                    // 2. LOGIC GHIM TIÊU ĐỀ (STICKY HEADER)
                     position: sticky; 
-                    top: 0; // Dính chặt lên đỉnh khi cuộn
-                    z-index: 10; // Nổi lên trên nội dung
+                    top: 0;
+                    z-index: 10;
                     
-                    // QUAN TRỌNG: Phải có màu nền, nếu không chữ bên dưới sẽ trôi qua kiểu "xuyên thấu" rất xấu
                     background-color: $white-color; 
                     
-                    // Mẹo nhỏ: Thêm box-shadow nhẹ để che cái border-bottom khi cuộn
                     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); 
                 }
             }
@@ -1572,13 +1568,11 @@ html, body {
                         font-size: 14px;
                         color: $text-color;
 
-                        // 1. Cột Tác giả
                         &.author-cell {
                             font-weight: 600;
                             color: #222;
                         }
 
-                        // 2. Cột Tương tác
                         .interaction-cell {
                             display: flex;
                             gap: 15px;
@@ -1589,12 +1583,11 @@ html, body {
                                 gap: 6px;
                                 font-size: 13px;
                                 
-                                &.like { color: #E91E63; } // Màu hồng tim
-                                &.comment { color: #64748B; } // Màu xám comment
+                                &.like { color: #E91E63; }
+                                &.comment { color: #64748B; }
                             }
                         }
 
-                        // 3. Cột Ngày tạo
                         &.date-cell {
                             color: #666;
                         }
@@ -1605,25 +1598,22 @@ html, body {
                                 align-items: center;
                                 gap: 6px;
                                 padding: 6px 12px;
-                                background-color: #f3f4f6; // Nền xám nhẹ
+                                background-color: #f3f4f6;
                                 border-radius: 20px;
                                 font-size: 13px;
                                 font-weight: 600;
                                 color: #4b5563;
 
                                 svg {
-                                    color: #00B4D8; // Icon màu xanh chủ đạo
+                                    color: #00B4D8;
                                 }
                             }
                         }
 
-                        // ...
-
-                        // STYLE CẬP NHẬT CHO CỘT HÀNH ĐỘNG
                         .action-cell {
                             display: flex;
                             justify-content: center;
-                            gap: 8px; // Giảm khoảng cách chút vì có 3 nút
+                            gap: 8px;
 
                             .btn-icon {
                                 width: 32px;
@@ -1638,19 +1628,194 @@ html, body {
                                 transition: all 0.2s;
                                 color: $gray-text;
 
-                                // 1. Nút Xem (View) - Màu xanh dương
                                 &.view:hover {
                                     background-color: rgba($primary-color, 0.1);
                                     color: $primary-color;
                                 }
                                 
-                                // 2. Nút Sửa (Edit) - Màu vàng cam (MỚI)
                                 &.edit:hover {
-                                    background-color: #fff7ed; // Nền cam nhạt
-                                    color: #f97316; // Màu cam
+                                    background-color: #fff7ed;
+                                    color: #f97316;
                                 }
 
-                                // 3. Nút Xóa (Delete) - Màu đỏ
+                                &.delete:hover {
+                                    background-color: #fee2e2;
+                                    color: #ef4444; 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.admin-users {
+    background-color: $white-color;
+    padding: 39px;
+    border-radius: 20px;
+    box-shadow: 0 2px 15px 6px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+
+    .title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: $text-color;
+    }
+
+    .admin-posts-input {
+        display: flex;
+        align-items: center;
+        max-width: 400px;
+        height: 45px;
+        background-color: $bg-input;
+        border-radius: 50px;
+        padding: 0 16px;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        margin-bottom: 30px; 
+
+        &:focus-within {
+            background-color: #fff;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+        }
+
+        .icon {
+            font-size: 22px;
+            color: $gray-text;
+            margin-right: 12px;
+            flex-shrink: 0; // Đảm bảo icon không bị bóp méo
+        }
+
+        input {
+            // SỬA 1: Dùng flex: 1 để input tự giãn hết cỡ
+            flex: 1; 
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-size: 15px;
+            color: $text-color;
+            
+            &::placeholder {
+                color: #8E8E8E;
+            }
+        }
+    }
+
+    // --- STYLE BẢNG ---
+    .admin-users-table {
+        width: 100%;
+        // SỬA 2: Đặt chiều cao và scroll ở đây để sticky hoạt động chuẩn
+        max-height: calc(100vh - 250px); // Tự động tính chiều cao còn lại (trừ header/padding)
+        overflow-y: auto; 
+        
+        table {
+            width: 100%;
+            // SỬA 3: QUAN TRỌNG - Dùng separate để border sticky không bị lỗi
+            border-collapse: separate; 
+            border-spacing: 0; 
+            
+            thead {
+                th {
+                    position: sticky;
+                    top: 0;
+                    background-color: $white-color; 
+                    z-index: 10;
+                    
+                    text-align: left;
+                    padding: 16px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: $gray-text;
+                    white-space: nowrap;
+
+                    // SỬA 4: Bây giờ dùng border-bottom bình thường được rồi
+                    border-bottom: 2px solid $border-color; 
+                }
+            }
+
+            tbody {
+                tr {
+                    transition: background-color 0.2s;
+                    // border-bottom không hoạt động trực tiếp trên tr khi dùng separate
+                    // nên ta sẽ style border cho td bên dưới
+
+                    &:hover {
+                        background-color: #f8f9fa;
+                    }
+
+                    td {
+                        padding: 16px;
+                        vertical-align: middle;
+                        font-size: 14px;
+                        color: $text-color;
+                        
+                        // SỬA 5: Kẻ viền dưới cho từng ô
+                        border-bottom: 1px solid $border-color;
+
+                        &.user-cell {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+
+                            img {
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                object-fit: cover;
+                                border: 1px solid $border-color;
+                            }
+
+                            .user-name {
+                                font-weight: 600;
+                                color: #222;
+                            }
+                        }
+
+                        &.email-cell { color: #555; }
+
+                        &.stats-cell {
+                            font-weight: 500;
+                            color: #444;
+                            svg {
+                                margin-right: 6px;
+                                color: $gray-text;
+                                vertical-align: text-bottom;
+                            }
+                        }
+
+                        &.date-cell {
+                            color: #666;
+                            font-size: 13px;
+                        }
+
+                        .action-cell {
+                            display: flex;
+                            justify-content: center;
+                            gap: 10px;
+
+                            .btn-icon {
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                border: none;
+                                background-color: transparent;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.2s;
+                                color: $gray-text;
+
+                                &.edit:hover {
+                                    background-color: #fff7ed;
+                                    color: #f97316;
+                                }
+
                                 &.delete:hover {
                                     background-color: #fee2e2;
                                     color: #ef4444; 

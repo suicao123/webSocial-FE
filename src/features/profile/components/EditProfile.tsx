@@ -83,6 +83,7 @@ function EditProfile(
                     'authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
+                    user_id: dataUser?.user_id,
                     display_name: name,
                     email: email,
                     bio: bio,

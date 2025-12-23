@@ -5,6 +5,7 @@ import { IoShieldOutline } from "react-icons/io5"
 import { MdPersonAddAlt1 } from "react-icons/md"
 import { useState } from "react"
 import AdminPosts from "../features/admin/components/AdminPosts"
+import AdminUsers from "../features/admin/components/AdminUsers"
 
 function AdminPage() {
 
@@ -93,7 +94,16 @@ function AdminPage() {
             </div>
 
             <div className="admin-menu-container">
-                <AdminPosts />
+                {
+                    menu == 1 ?
+                    <AdminPosts /> :
+                    ''
+                }
+                {
+                    menu == 2 ?
+                    <AdminUsers /> :
+                    ''
+                }
             </div>
         </div>
     )
