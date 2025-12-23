@@ -105,7 +105,6 @@ function Post( {
             else {
                 setRefreshKey(prev => prev + 1);
             }
-            // Nếu thành công: Không cần làm gì cả vì UI đã đúng rồi
         } catch (error) {
             // Nếu lỗi mạng hoặc server lỗi:
             // Trả lại trạng thái cũ (Rollback)

@@ -124,6 +124,8 @@ function Home() {
                     />
                     {
                         dataPosts.map((data) => {
+                            console.log(dataPost);
+                            
                             return (
                                 <Post
                                     dataPost = {data}

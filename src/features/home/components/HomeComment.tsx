@@ -201,7 +201,7 @@ function HomeComment(
                 <div className="line"></div>
 
                 <div className="home-comment-footer">
-                    <img src={dataPost?.users_posts_user_idTousers.avatar_url} className="avatar-post-header" />
+                    <img src={dataUser?.avatar_url} className="avatar-post-header" />
                     <div className="home-comment-footer-content">
                         <textarea 
                             placeholder="Viết bình luận"

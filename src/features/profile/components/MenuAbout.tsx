@@ -1,7 +1,7 @@
 import { memo, useState } from "react"
-import Intro from "../../../components/ui/about/intro";
 import type { typeUser } from "../../../types/user";
 import Connect from "../../../components/ui/about/Connect";
+import Intro from "../../../components/ui/about/Intro";
 
 function MenuAbout(
     {
@@ -36,7 +36,7 @@ function MenuAbout(
             </div>
             {
                 activeMenu == 1 ?
-                <Intro 
+                <Intro
                     dataUser={dataUser}
                 /> : ''
             }

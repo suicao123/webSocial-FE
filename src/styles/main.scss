@@ -11,6 +11,9 @@ $error-color: red;
 $background-color: #00C4FF;
 $gray-color: #F5F5F5;
 $input-color: #F0F2F5;
+$bg-input: #F0F2F5;
+$primary-color: #00B4D8;
+$gray-text: #65676b;
 
 * {
     margin: 0;
@@ -682,6 +685,41 @@ html, body {
                 height: 200px;
                 overflow-y: auto;
                 gap: 8px;
+
+                .preview-item {
+                    position: relative; // QUAN TRỌNG: Để icon căn theo khung này
+                    width: 100%;
+                    height: auto; // Hoặc set chiều cao cố định nếu muốn
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 8px; // Bo góc ảnh cho đẹp
+                        display: block; // Tránh khoảng trắng thừa dưới ảnh
+                    }
+
+                    // Style cho nút xóa
+                    .icon {
+                        position: absolute; // Để icon đè lên ảnh
+                        top: 8px;   // Cách mép trên 8px
+                        right: 8px; // Cách mép phải 8px
+                        
+                        font-size: 24px; // Kích thước icon
+                        color: rgba(0, 0, 0, 0.6); // Màu đen mờ
+                        background-color: rgba(255, 255, 255, 0.8); // Nền trắng mờ để dễ nhìn
+                        border-radius: 50%; // Bo tròn nền
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        z-index: 10;
+
+                        &:hover {
+                            color: $background-color; // Hover vào chuyển màu đỏ
+                            background-color: $white-color;
+                            transform: scale(1.1); // Phóng to nhẹ
+                        }
+                    }
+                }
             }
 
             .home-post-main-img {
@@ -1273,6 +1311,7 @@ html, body {
     position: sticky;
     top: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 
     .header-main-content {
         width: 100%;
@@ -1383,7 +1422,245 @@ html, body {
     }
 
     .admin-menu {
+        margin: 0 80px;
+        width: 700px;
+        height: 39px;
+        display: flex;
+        align-items: center;
+        border: $background-color 1px solid;
+        border-radius: 20px;
+        gap: 8px;
+
+        .item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 80%;
+            border-radius: 30px;
+            gap: 6px;
+            margin: 6px;
+            transition: all 0.3s ease;
+
+            &.show {
+                background-color: $white-color;
+            }
+
+            &:hover:not(.show) {
+                cursor: pointer;
+                background-color: rgba($background-color, 0.1); // Hiện màu xanh mờ mờ
+            }
+        }
+    }
+
+    .admin-menu-container {
+        margin: 39px 80px;
+        border-radius: 20px;
+    }
+}
+
+.admin-posts {
+    background-color: $white-color;
+    padding: 39px;
+    border-radius: 20px;
+    box-shadow: 0 2px 15px 6px rgba(0, 0, 0, 0.1);
+
+    .title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 24px;
+    }
+
+    .admin-posts-input {
+        display: flex;
+        align-items: center; // Căn giữa icon và chữ theo chiều dọc
         
+        max-width: 400px; // Giới hạn chiều rộng (không để dài thòng lòng hết màn hình)
+        height: 45px; // Chiều cao cố định cho đẹp
+        
+        background-color: $bg-input; // Nền xám nhạt
+        border-radius: 50px; // Bo tròn 2 đầu (hình viên thuốc)
+        padding: 0 16px; // Khoảng cách nội dung so với viền
+        
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+
+        &:focus-within {
+            background-color: #fff;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+        }
+
+        .icon {
+            font-size: 22px;
+            color: $gray-text;
+            margin-right: 12px;
+        }
+
+        input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            
+            font-size: 15px;
+            color: $text-color;
+            font-family: inherit;
+
+            &::placeholder {
+                color: #8E8E8E;
+                font-weight: 400;
+            }
+        }
+    }
+
+    .admin-posts-table {
+        width: 100%;
+        max-height: 500px;
+        overflow-x: auto;
+
+        // Làm đẹp thanh cuộn (tùy chọn)
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: $border-color;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;  
+            
+            thead {
+                th {
+                    // ... các thuộc tính cũ giữ nguyên ...
+                    text-align: left;
+                    padding: 12px 16px;
+                    font-size: 14px;
+                    color: $gray-text;
+                    font-weight: 600;
+                    border-bottom: 2px solid $border-color;
+
+                    // 2. LOGIC GHIM TIÊU ĐỀ (STICKY HEADER)
+                    position: sticky; 
+                    top: 0; // Dính chặt lên đỉnh khi cuộn
+                    z-index: 10; // Nổi lên trên nội dung
+                    
+                    // QUAN TRỌNG: Phải có màu nền, nếu không chữ bên dưới sẽ trôi qua kiểu "xuyên thấu" rất xấu
+                    background-color: $white-color; 
+                    
+                    // Mẹo nhỏ: Thêm box-shadow nhẹ để che cái border-bottom khi cuộn
+                    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); 
+                }
+            }
+
+            tbody {
+                tr {
+                    transition: background-color 0.2s;
+                    border-bottom: 1px solid $border-color;
+
+                    &:hover {
+                        background-color: #f8f9fa;
+                    }
+
+                    td {
+                        padding: 16px;
+                        vertical-align: middle;
+                        font-size: 14px;
+                        color: $text-color;
+
+                        // 1. Cột Tác giả
+                        &.author-cell {
+                            font-weight: 600;
+                            color: #222;
+                        }
+
+                        // 2. Cột Tương tác
+                        .interaction-cell {
+                            display: flex;
+                            gap: 15px;
+                            
+                            .item {
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                font-size: 13px;
+                                
+                                &.like { color: #E91E63; } // Màu hồng tim
+                                &.comment { color: #64748B; } // Màu xám comment
+                            }
+                        }
+
+                        // 3. Cột Ngày tạo
+                        &.date-cell {
+                            color: #666;
+                        }
+
+                        &.image-cell {
+                            .image-count-badge {
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 6px;
+                                padding: 6px 12px;
+                                background-color: #f3f4f6; // Nền xám nhẹ
+                                border-radius: 20px;
+                                font-size: 13px;
+                                font-weight: 600;
+                                color: #4b5563;
+
+                                svg {
+                                    color: #00B4D8; // Icon màu xanh chủ đạo
+                                }
+                            }
+                        }
+
+                        // ...
+
+                        // STYLE CẬP NHẬT CHO CỘT HÀNH ĐỘNG
+                        .action-cell {
+                            display: flex;
+                            justify-content: center;
+                            gap: 8px; // Giảm khoảng cách chút vì có 3 nút
+
+                            .btn-icon {
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                border: none;
+                                background-color: transparent;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.2s;
+                                color: $gray-text;
+
+                                // 1. Nút Xem (View) - Màu xanh dương
+                                &.view:hover {
+                                    background-color: rgba($primary-color, 0.1);
+                                    color: $primary-color;
+                                }
+                                
+                                // 2. Nút Sửa (Edit) - Màu vàng cam (MỚI)
+                                &.edit:hover {
+                                    background-color: #fff7ed; // Nền cam nhạt
+                                    color: #f97316; // Màu cam
+                                }
+
+                                // 3. Nút Xóa (Delete) - Màu đỏ
+                                &.delete:hover {
+                                    background-color: #fee2e2;
+                                    color: #ef4444; 
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
