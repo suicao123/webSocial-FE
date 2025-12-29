@@ -3,7 +3,6 @@ import Header from "../components/layout/Header"
 import type { typeFriends, typeUser } from "../types/user"
 import type { typePost } from "../types/post";
 import { MdEdit, MdPersonAddAlt1 } from "react-icons/md";
-import MenuPost from "../features/profile/components/MenuPost";
 import HomePost from "../features/home/components/HomePost";
 import HomeComment from "../features/home/components/HomeComment";
 import { useParams } from "react-router";

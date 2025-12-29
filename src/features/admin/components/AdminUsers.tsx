@@ -3,7 +3,6 @@ import { CiSearch } from "react-icons/ci"
 import { FaEdit, FaTrash, FaUserFriends } from "react-icons/fa"
 import { GrDocumentText } from "react-icons/gr"
 import type { typeUser } from "../../../types/user";
-import EditPost from "./EditPost";
 import EditProfile from "../../profile/components/EditProfile";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
@@ -15,6 +14,7 @@ function AdminUsers() {
     const [users, setUsers] = useState<any[]>([]);
     const [dataUser, setUser] = useState<typeUser>();
     const [isEdit, setEdit] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>('');
     
     const [refreshKey, setRefreshKey] = useState<number>(0);
 
@@ -22,12 +22,13 @@ function AdminUsers() {
         const fetchUsers = async () => {
             try {
                 const token = localStorage.getItem('authToken');
-                const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getUsersList`, {
+                const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getUsersList?search=${search}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                
                 
                 const result = await response.json();
 
@@ -53,7 +54,7 @@ function AdminUsers() {
         }
 
         fetchUsers();
-    }, [refreshKey]);
+    }, [refreshKey, search]);
 
     function handleEdit(user: any) {
         const userForEdit: typeUser = {
@@ -116,8 +117,8 @@ function AdminUsers() {
                 />
                 <input 
                     type="text"     
-                    // value={email??''}
-                    // onChange={(e) => setEmail(e.target.value)}
+                    value={search??''}
+                    onChange={(e) => setSearch(e.target.value)}
                     placeholder="Tìm kiếm người dùng"
                 />
             </div>

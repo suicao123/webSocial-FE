@@ -21,3 +21,26 @@ export interface typeFriends {
     display_name: string,
     avatar_url: string
 };
+
+export interface typeListAccout {
+    user_id: string | number;
+
+    display_name: string | null;
+    email: string | null;
+    avatar_url: string | null;
+
+    created_at: string;
+
+    post_count: number;
+    friend_count: number;
+}
+
+export interface typeViewListData {
+    id: string | number;
+    name: string;
+    email: string;
+    avatar: string;
+    joinDate: string;
+    posts?: number;
+    friends?: number;
+}

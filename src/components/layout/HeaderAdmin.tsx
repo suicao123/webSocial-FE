@@ -1,7 +1,15 @@
 import { IoIosLogOut } from "react-icons/io"
 import { useAuth } from "../../context/useAuth"
+import type { typeUser } from "../../types/user";
 
-function HeaderAdmin() {
+function HeaderAdmin(
+    {
+        user
+    } :
+    {
+        user: typeUser | undefined
+    }
+) {
 
     const { logout } = useAuth()
 
@@ -14,10 +22,10 @@ function HeaderAdmin() {
             <div className="header-main-content">
                 <div className="left">
                     <div className="info-admin">
-                        <img src="https://res.cloudinary.com/dd0yqxowo/image/upload/v1761823049/user-default_jxnvbw.jpg" />
+                        <img src={user?.avatar_url} />
                         <div className="content">
-                            <p>admin_name</p>
-                            <p>email</p>
+                            <p>{user?.display_name}</p>
+                            <p>{user?.email}</p>
                         </div>
                     </div>
                 </div>

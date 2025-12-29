@@ -18,6 +18,7 @@ function AdminPosts() {
     const [dataUser, setUser] = useState<typeUser | undefined>();
     const [isCommenting, setCommenting] = useState<boolean>(false);
     const [isEditing, setEditing] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>('');
     const { user } = useAuth();
 
     const [refreshKey, setRefreshKey] = useState<number>(0);
@@ -27,7 +28,7 @@ function AdminPosts() {
         
         const getData = async () => {
             try {
-                const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts`, {
+                const dataApi = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts?search=${search}`, {
                     headers: {
                         'authorization': `Bearer ${token}`
                     }
@@ -66,7 +67,7 @@ function AdminPosts() {
 
         getData();
         getUser();
-    }, [refreshKey]);
+    }, [refreshKey, search]);
 
 
     const formatDate = (isoString: string | null) => {
@@ -149,8 +150,8 @@ function AdminPosts() {
                 />
                 <input 
                     type="text"     
-                    // value={email??''}
-                    // onChange={(e) => setEmail(e.target.value)}
+                    value={search??''}
+                    onChange={(e) => setSearch(e.target.value)}
                     placeholder="Tìm kiếm bài viết"
                 />
             </div>
