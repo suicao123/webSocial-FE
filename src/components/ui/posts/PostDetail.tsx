@@ -7,11 +7,19 @@ import { useAuth } from "../../../context/useAuth"
 import { RiDeleteBin5Fill } from "react-icons/ri"
 import { Link } from "react-router"
 
+// --- THÊM IMPORT SWIPER ---
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+// --------------------------
+
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
 const PORT = import.meta.env.VITE_API_PORT || '8080';
 
-function Post( {
+function PostDetail( {
     dataPost,
     setPost,
     setCommenting,
@@ -22,20 +30,6 @@ function Post( {
     setCommenting: React.Dispatch<React.SetStateAction<boolean>>,
     setRefreshKey: React.Dispatch<React.SetStateAction<number>>
 } ) {
-
-    // useEffect(() => {
-    //     setLike(dataPost?.isLike ?? false);
-    // }, []);
-
-    // 1. Tạo state nội bộ để hiển thị (QUAN TRỌNG)
-    // const [internalPost, setInternalPost] = useState<typePost | undefined>(dataPost);
-    // const [like, setLike] = useState<boolean>(internalPost?.isLike ?? false);
-    
-
-    // Cập nhật state nội bộ nếu cha truyền data mới vào (khi load trang lần đầu)
-    // useEffect(() => {
-    //     setInternalPost(dataPost);
-    // }, [dataPost]);
 
     const { user } = useAuth();
     const [menu, setMenu] = useState<boolean>(false);
@@ -70,28 +64,6 @@ function Post( {
     }
     
     async function handleLike() {
-
-        // if (!internalPost) return;
-
-        // // Lưu lại giá trị cũ để phòng trường hợp lỗi thì quay xe (revert)
-        // const previousPostData = { ...internalPost };
-        // const isCurrentlyLiked = internalPost.isLike;
-        // setLike(prev => !prev);
-        
-        // // --- BƯỚC QUAN TRỌNG NHẤT: CẬP NHẬT UI NGAY LẬP TỨC ---
-        // setInternalPost(prev => {
-        //     if (!prev) return undefined;
-        //     return {
-        //         ...prev,
-        //         isLike: !isCurrentlyLiked, // Đảo ngược trạng thái (Like -> Unlike)
-        //         _count: {
-        //             ...prev._count,
-        //             // Nếu đang like thì trừ 1, chưa like thì cộng 1
-        //             post_likes: isCurrentlyLiked ? prev._count.post_likes - 1 : prev._count.post_likes + 1
-        //         }
-        //     };
-        // });
-
         try {
             const token = localStorage.getItem('authToken');
             const res = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/createLike/${dataPost?.post_id}`, {
@@ -106,61 +78,44 @@ function Post( {
                 setRefreshKey(prev => prev + 1);
             }
         } catch (error) {
-            // Nếu lỗi mạng hoặc server lỗi:
-            // Trả lại trạng thái cũ (Rollback)
-            // setInternalPost(previousPostData);
             alert('Không thể thích bài viết lúc này!');
         }
     }
     
+    // --- SỬA HÀM RENDER DÙNG SWIPER ---
     const renderPostImages = () => {
         const images = dataPost?.image_url || [];
         if (images.length === 0) return null;
 
-        // Trường hợp 1 ảnh: Hiển thị full
-        if (images.length === 1) {
-            return <img src={images[0]} 
-                className="image single-image" 
-                alt="post-img" 
-                onClick={ handleComment }
-            />;
-        }
-
-        // Trường hợp nhiều ảnh: Lấy tối đa 4 ảnh để hiển thị
-        const displayImages = images.slice(0, 4);
-        const remainingImages = images.length - 4; // Số ảnh còn dư nếu > 4
-
-        // Xác định class layout dựa trên số lượng ảnh (2, 3, hoặc 4)
-        // Nếu > 4 ảnh thì layout vẫn giống layout-4 nhưng có thêm xử lý overlay
-        const layoutClass = `layout-${Math.min(images.length, 4)}`;
-
         return (
-            <div className={`image-grid ${layoutClass}`}>
-                {displayImages.map((img, index) => {
-                    // Logic xử lý trường hợp đặc biệt cho layout 3 ảnh:
-                    // Ảnh thứ 3 (index 2) sẽ nằm ở dưới và chiếm toàn bộ chiều rộng (span 2 cột)
-                    const isThirdItemInLayout3 = images.length === 3 && index === 2;
-                    
-                    // Logic xử lý ảnh thứ 4 khi tổng số ảnh > 4 (Hiển thị overlay số dư)
-                    const isOverlayItem = index === 3 && remainingImages > 0;
-
-                    return (
-                        <div 
-                            key={index} 
-                            className={`grid-item ${isThirdItemInLayout3 ? 'span-col-2' : ''}`}
-                            onClick={ handleComment }
-                        >
-                            <img src={img} alt={`post-img-${index}`} />
-                            
-                            {/* Overlay hiển thị số ảnh còn lại (+N) */}
-                            {isOverlayItem && (
-                                <div className="more-overlay">
-                                    <span>+{remainingImages}</span>
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
+            // Đặt class riêng để dễ CSS
+            <div className="post-detail-slider">
+                <Swiper
+                    modules={[Navigation, Pagination]}
+                    spaceBetween={0}      // Khoảng cách giữa các ảnh
+                    slidesPerView={1}     // Hiện 1 ảnh 1 lúc
+                    navigation={true}     // Hiện mũi tên
+                    pagination={{ clickable: true }} // Hiện chấm tròn
+                    className="my-swiper"
+                >
+                    {images.map((img, index) => (
+                        <SwiperSlide key={index}>
+                            <div className="slide-content">
+                                {/* Ảnh chính */}
+                                <img 
+                                    src={img} 
+                                    alt={`detail-${index}`} 
+                                    loading="lazy"
+                                />
+                                {/* Background mờ (trang trí cho đẹp nếu ảnh không vừa khung) */}
+                                <div 
+                                    className="blur-backdrop" 
+                                    style={{backgroundImage: `url(${img})`}}
+                                ></div>
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
             </div>
         );
     };
@@ -204,13 +159,7 @@ function Post( {
             </div>
             <div className="post-content">
                 <p>{dataPost?.content}</p>
-                {/* {
-                    dataPost?.image_url?.map(img => {
-                        return (
-                            <img src={img} className="image"/>
-                        )
-                    })
-                } */}
+                {/* Render Slider */}
                 {renderPostImages()}
             </div>
             <div className="post-interact-show">
@@ -247,4 +196,4 @@ function Post( {
     )
 }
 
-export default memo(Post)
+export default memo(PostDetail)

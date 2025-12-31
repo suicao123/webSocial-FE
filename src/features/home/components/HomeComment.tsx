@@ -1,10 +1,10 @@
 
 import { useEffect, useState } from "react";
-import Post from "../../../components/ui/posts/Post";
 import type { typeComment, typePost } from "../../../types/post";
 import { IoMdClose, IoMdSend } from "react-icons/io";
 import type { typeUser } from "../../../types/user";
 import { io } from "socket.io-client";
+import PostDetail from "../../../components/ui/posts/PostDetail";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -160,7 +160,7 @@ function HomeComment(
                 <div className="line"></div>
 
                 <div className="home-comment-main">
-                    <Post 
+                    <PostDetail
                         dataPost={dataPost}
                         setPost={setPost}
                         setCommenting={setCommenting}
