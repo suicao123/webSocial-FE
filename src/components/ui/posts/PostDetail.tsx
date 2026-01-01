@@ -64,21 +64,64 @@ function PostDetail( {
     }
     
     async function handleLike() {
+        // try {
+        //     const token = localStorage.getItem('authToken');
+        //     const res = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/createLike/${dataPost?.post_id}`, {
+        //         method: 'POST',
+        //         headers: { 'authorization': `Bearer ${token}` }
+        //     });
+
+        //     if (!res.ok) {
+        //         throw new Error("Like thất bại");
+        //     }
+        //     else {
+        //         setRefreshKey(prev => prev + 1);
+        //     }
+        // } catch (error) {
+        //     alert('Không thể thích bài viết lúc này!');
+        // }
+
         try {
             const token = localStorage.getItem('authToken');
+            
+            // --- CẬP NHẬT UI NGAY LẬP TỨC (Optimistic Update) ---
+            // Sử dụng setPost được truyền từ props xuống
+            setPost((prev) => {
+                if (!prev) return prev;
+                
+                const isCurrentlyLiked = prev.isLike;
+                
+                return {
+                    ...prev,
+                    isLike: !isCurrentlyLiked, // Đảo ngược trạng thái like
+                    _count: {
+                        ...prev._count,
+                        // Tăng hoặc giảm số lượng like dựa trên trạng thái mới
+                        post_likes: !isCurrentlyLiked 
+                            ? prev._count.post_likes + 1 
+                            : prev._count.post_likes - 1
+                    }
+                };
+            });
+            // ----------------------------------------------------
+
             const res = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/createLike/${dataPost?.post_id}`, {
                 method: 'POST',
                 headers: { 'authorization': `Bearer ${token}` }
             });
 
             if (!res.ok) {
+                // Nếu API lỗi, bạn nên revert (đảo ngược) lại state setPost ở đây
+                // Hoặc thông báo lỗi và reload lại trang
                 throw new Error("Like thất bại");
             }
             else {
+                // Cập nhật lại danh sách bên ngoài Home để đồng bộ
                 setRefreshKey(prev => prev + 1);
             }
         } catch (error) {
             alert('Không thể thích bài viết lúc này!');
+            // Revert lại state nếu cần thiết tại đây
         }
     }
     

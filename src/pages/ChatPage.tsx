@@ -1,6 +1,5 @@
 import { CiSearch } from "react-icons/ci"
 import Header from "../components/layout/Header"
-import { IoMdSend } from "react-icons/io"
 import { useEffect, useState } from "react";
 import type { typeFriends } from "../types/user";
 import { useAuth } from "../context/useAuth";
@@ -16,6 +15,7 @@ function ChatPage() {
     const [dataPartner, setPartner] = useState<typeFriends>();
     const [dataMessages, setMessages] = useState<any[]>();
     const [conversationId, setConversationId] = useState<BigInt>();
+    const [search, setSearch] = useState<string>("");
     const { user } = useAuth();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ function ChatPage() {
         const getFriends = async () => {
             try {
                 
-                const friendList = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getFriends/${user?.user_id}`, {
+                const friendList = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/users/getFriends/${user?.user_id}?search=${search}`, {
                     headers: {
                         'authorization': `Bearer ${token}`
                     }
@@ -45,7 +45,7 @@ function ChatPage() {
         }
 
         getFriends();
-    }, []);
+    }, [search]);
 
     const openConsersation = async (partner_id: string) => {
         try {
@@ -110,6 +110,8 @@ function ChatPage() {
                             />
                             <input 
                                 type="text" 
+                                value={search}
+                                onChange={ (e) => setSearch(e.target.value) }
                                 placeholder="Tìm kiếm"
                             />
                         </div>

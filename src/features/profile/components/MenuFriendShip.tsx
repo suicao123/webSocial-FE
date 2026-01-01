@@ -1,5 +1,5 @@
-import { memo, type Dispatch } from "react"
-import { CiSearch } from "react-icons/ci"
+import { memo } from "react"
+// import { CiSearch } from "react-icons/ci"
 import { IoEllipsisHorizontalOutline } from "react-icons/io5"
 import type { typeFriends } from "../../../types/user"
 import { useNavigate } from "react-router"
@@ -26,21 +26,21 @@ function MenuFriendShip(
                     <p>Bạn bè</p>
                 </div>
                 <div className="profile-layout-friendships-header-right">
-                    <div className="invite-friendship">
-                        Lòi mời kết bạn
-                    </div>
-                    <div className="find-friendship">
-                        Tìm bạn
-                    </div>
-                    <div className="input-header">
-                        <CiSearch
-                            className="icon"
-                        />
-                        <input 
-                            type="text" 
-                            placeholder="Tìm kiếm"
-                        />
-                    </div>
+                        {/* <div className="invite-friendship">
+                            Lòi mời kết bạn
+                        </div>
+                        <div className="find-friendship">
+                            Tìm bạn
+                        </div>
+                        <div className="input-header">
+                            <CiSearch
+                                className="icon"
+                            />
+                            <input 
+                                type="text" 
+                                placeholder="Tìm kiếm"
+                            />
+                        </div> */}
                 </div>
             </div>
             <div className="profile-layout-friendships-list-friends">

@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react"
 import { CiChat1, CiSearch } from "react-icons/ci"
 import { MdHome } from "react-icons/md"
-import { Link, useNavigate } from "react-router"
+import { useNavigate } from "react-router"
 import type { payload, typeUser } from "../../types/user";
 import { useAuth } from "../../context/useAuth";
 import { FiLogOut } from "react-icons/fi";
@@ -17,7 +17,7 @@ function Header(
     {menuId: number}
 ) {
 
-    const [userId, setUserId] = useState<string | undefined>();
+    // const [userId, setUserId] = useState<string | undefined>();
     const [dataUser, setUser] = useState<typeUser | undefined>();
     const [menu, setMenu] = useState<boolean>(false);
     const [isActionMenu, setActionMenu] = useState<number>(menuId);
@@ -36,7 +36,7 @@ function Header(
         
         const user_id = userToken?.user_id;
 
-        setUserId(user_id);
+        // setUserId(user_id);
 
         const getUser = async () => {
             try {
@@ -110,13 +110,13 @@ function Header(
                 </div>
             </div>
             <div className="main-header-right">
-                <div 
+                {/* <div 
                     className="chat-main-header-right"
                 >
                     <CiChat1
                         className="icon"
                     />
-                </div>
+                </div> */}
                 <div 
                     className="avatar-user-header"
                     onMouseEnter={ () => setMenu(true) }

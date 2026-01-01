@@ -370,7 +370,7 @@ function ProfilePage() {
                         <img src={dataUser?.avatar_url} />
                         <div className="text">
                             <p>{dataUser?.display_name}</p>
-                            <p>1 bạn bè</p>
+                            {/* <p>1 bạn bè</p> */}
                         </div>
                     </div>
                     <div className="profile-header-right">

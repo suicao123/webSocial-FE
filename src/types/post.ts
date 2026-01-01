@@ -35,8 +35,11 @@ export interface commentAuthor {
 }
 
 export interface typeComment {
-    post_id: string,
-    content: string,
+    comment_id: string;
+    user_id: string;
 
-    users: commentAuthor
+    post_id: string;
+    content: string;
+    users: commentAuthor;
+    created_at?: string;
 }

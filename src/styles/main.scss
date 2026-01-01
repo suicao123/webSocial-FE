@@ -1008,6 +1008,49 @@ html, body {
             overflow-y: auto;
             height: 500px;
             
+            // .home-comment-content {
+            //     display: flex;
+            //     flex-direction: column;
+            //     gap: 16px;
+            //     margin: 8px 20px 0;
+
+            //     .comment {
+            //         display: flex;
+            //         gap: 8px;
+            //         justify-content: center;
+
+            //         img {
+            //             width: 30px;
+            //             height: 30px;
+                        
+            //             // Sửa ở đây: Dùng object-fit cho thẻ <img>
+            //             object-fit: cover; 
+                        
+            //             // Thêm cái này để làm tròn avatar
+            //             border-radius: 50%;
+            //         }
+
+            //         .comment-data {
+            //             display: flex;
+            //             overflow-wrap: break-word;
+            //             flex-direction: column;
+            //             background-color: $input-color;
+            //             width: 96%;
+            //             border-radius: 20px;
+
+            //             .data {
+            //                 margin: 8px 0 8px 12px;
+            //                 font-size: 18px;
+
+            //                 p:first-child{
+            //                     font-size: 15px;
+            //                     font-weight: bold;
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+
             .home-comment-content {
                 display: flex;
                 flex-direction: column;
@@ -1017,35 +1060,98 @@ html, body {
                 .comment {
                     display: flex;
                     gap: 8px;
-                    justify-content: center;
+                    align-items: flex-start; // Căn lề trên
 
                     img {
                         width: 30px;
                         height: 30px;
-                        
-                        // Sửa ở đây: Dùng object-fit cho thẻ <img>
-                        object-fit: cover; 
-                        
-                        // Thêm cái này để làm tròn avatar
+                        object-fit: cover;
                         border-radius: 50%;
+                        flex-shrink: 0; // Tránh avatar bị méo khi comment dài
+                    }
+                    
+                    // Wrapper bao gồm cả bong bóng chat và nút 3 chấm
+                    .comment-wrapper {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        max-width: 90%;
+                        position: relative; // Để định vị menu dropdown
+
+                        .comment-data {
+                            display: flex;
+                            overflow-wrap: break-word; // Fix text dài bị tràn
+                            word-break: break-word;
+                            flex-direction: column;
+                            background-color: $input-color;
+                            border-radius: 18px;
+                            padding: 8px 12px; // Padding cho bong bóng chat đẹp hơn
+
+                            .data {
+                                margin: 0;
+                                font-size: 15px; // Font chữ nội dung vừa phải
+
+                                p:first-child {
+                                    font-size: 13px;
+                                    font-weight: bold;
+                                    margin-bottom: 4px;
+                                }
+                            }
+                        }
+
+                        // Style cho khu vực chứa nút 3 chấm
+                        .comment-options {
+                            position: relative;
+                            
+                            .option-icon {
+                                cursor: pointer;
+                                padding: 4px;
+                                border-radius: 50%;
+                                color: #65676b;
+                                opacity: 0; // Mặc định ẩn
+                                transition: opacity 0.2s;
+
+                                &:hover {
+                                    background-color: #f0f2f5;
+                                }
+                            }
+
+                            // Dropdown menu
+                            .option-menu {
+                                position: absolute;
+                                top: 100%;
+                                left: 0; // Hoặc right: 0 tùy ý
+                                background-color: white;
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                                border-radius: 8px;
+                                width: 120px;
+                                z-index: 10;
+                                padding: 4px 0;
+                                overflow: hidden;
+
+                                .menu-item {
+                                    padding: 8px 12px;
+                                    font-size: 14px;
+                                    margin: 0 px;
+                                    border-radius: 10px;
+                                    cursor: pointer;
+                                    
+                                    &:hover {
+                                        background-color: #f0f2f5;
+                                    }
+
+                                    &.delete {
+                                        color: $black-color; // Màu đỏ cho nút xóa
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    .comment-data {
-                        display: flex;
-                        overflow-wrap: break-word;
-                        flex-direction: column;
-                        background-color: $input-color;
-                        width: 96%;
-                        border-radius: 20px;
-
-                        .data {
-                            margin: 8px 0 8px 12px;
-                            font-size: 18px;
-
-                            p:first-child{
-                                font-size: 15px;
-                                font-weight: bold;
-                            }
+                    // Logic hover: Khi hover vào toàn bộ dòng comment thì hiện nút 3 chấm
+                    &:hover {
+                        .comment-wrapper .comment-options .option-icon {
+                            opacity: 1;
                         }
                     }
                 }
@@ -2928,6 +3034,81 @@ html, body {
                     flex-direction: column-reverse;
                     overflow-y: auto;
                     max-height: 500px;
+
+                    .message-row {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px; // Khoảng cách giữa icon và tin nhắn
+                        position: relative; // Để định vị dropdown
+
+                        .message-options {
+                            opacity: 0; 
+                            transition: opacity 0.2s ease-in-out;
+                            pointer-events: none; // Tránh bấm nhầm khi đang ẩn
+
+                            &.active {
+                                opacity: 1;
+                                pointer-events: auto;
+                                z-index: 10; // Đảm bảo nổi lên trên
+                            }
+                        }
+
+                        // 2. Khi hover vào dòng tin nhắn thì hiện icon lên
+                        &:hover {
+                            .message-options {
+                                opacity: 1;
+                                pointer-events: auto; // Cho phép bấm khi hiện
+                            }
+                        }
+                    }
+
+                    // Style cho nút 3 chấm và menu
+                    .message-options {
+                        position: relative;
+
+                        .option-icon {
+                            cursor: pointer;
+                            color: #aaa;
+                            padding: 4px;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            
+
+                            &:hover {
+                                background-color: #f0f2f5;
+                                color: #333;
+                            }
+                        }
+
+                        .option-menu {
+                            position: absolute;
+                            bottom: 100%; // Hiện menu lên trên icon (vì tin nhắn ở dưới cùng)
+                            right: 0;     // Canh phải theo icon
+                            background-color: white;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                            border-radius: 8px;
+                            width: 100px;
+                            z-index: 100;
+                            overflow: hidden;
+
+                            .menu-item {
+                                padding: 8px 12px;
+                                font-size: 14px;
+                                cursor: pointer;
+                                color: #333;
+                                text-align: left;
+
+                                &:hover {
+                                    background-color: #f0f2f5;
+                                }
+
+                                &.delete {
+                                    color: $black-color;
+                                }
+                            }
+                        }
+                    }
 
                     .another-message {
                         display: flex;

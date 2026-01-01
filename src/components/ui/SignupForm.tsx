@@ -39,11 +39,42 @@ function SignupForm(
         setAuth((prev) => !prev);
     }
 
-    function handleSignup() {
-        setError(validateSignup(username, fullname, password));
+    async function handleSignup() {
+        setError(Object.keys(validateSignup(username, fullname, password, password)).length > 0);
 
-        if(!validateSignup(username, fullname, password)) {
-            setAuth((prev) => !prev);
+        try {
+            // 2. Chuẩn bị dữ liệu gửi lên Server
+            const payload = {
+                username: username,
+                password: password,
+                display_name: fullname,
+                email: "", 
+                role_id: 1,
+                bio: "", 
+            };
+
+            // 3. Gọi API
+            const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/login/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                setAuth((prev) => !prev);
+            } else {
+                // 5. Thất bại -> Hiển thị lỗi từ server (ví dụ: Username đã tồn tại)
+                alert(data.message || "Đăng ký thất bại");
+            }
+
+        } catch (error) {
+            console.error("Lỗi đăng ký:", error);
+            alert("Lỗi kết nối đến server");
         }
     }
 
@@ -102,7 +133,7 @@ function SignupForm(
                     </div>
                 </div>
 
-                <span className={`error-message ${isError ? 'show' : ''}`}>Sai thông tin đăng nhập!!!</span> 
+                <span className={`error-message ${isError ? 'show' : ''}`}>Sai thông tin đăng ký!!!</span> 
 
                 <div className="button">
                     <div 
