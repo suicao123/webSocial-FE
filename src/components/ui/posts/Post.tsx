@@ -113,46 +113,88 @@ function Post( {
         }
     }
     
+    // const renderPostImages = () => {
+    //     const images = dataPost?.image_url || [];
+    //     if (images.length === 0) return null;
+
+    //     // Trường hợp 1 ảnh: Hiển thị full
+    //     if (images.length === 1) {
+    //         return <img src={images[0]} 
+    //             className="image single-image" 
+    //             alt="post-img" 
+    //             onClick={ handleComment }
+    //         />;
+    //     }
+
+    //     // Trường hợp nhiều ảnh: Lấy tối đa 4 ảnh để hiển thị
+    //     const displayImages = images.slice(0, 4);
+    //     const remainingImages = images.length - 4; // Số ảnh còn dư nếu > 4
+
+    //     // Xác định class layout dựa trên số lượng ảnh (2, 3, hoặc 4)
+    //     // Nếu > 4 ảnh thì layout vẫn giống layout-4 nhưng có thêm xử lý overlay
+    //     const layoutClass = `layout-${Math.min(images.length, 4)}`;
+
+    //     return (
+    //         <div className={`image-grid ${layoutClass}`}>
+    //             {displayImages.map((img, index) => {
+    //                 // Logic xử lý trường hợp đặc biệt cho layout 3 ảnh:
+    //                 // Ảnh thứ 3 (index 2) sẽ nằm ở dưới và chiếm toàn bộ chiều rộng (span 2 cột)
+    //                 const isThirdItemInLayout3 = images.length === 3 && index === 2;
+                    
+    //                 // Logic xử lý ảnh thứ 4 khi tổng số ảnh > 4 (Hiển thị overlay số dư)
+    //                 const isOverlayItem = index === 3 && remainingImages > 0;
+
+    //                 return (
+    //                     <div 
+    //                         key={index} 
+    //                         className={`grid-item ${isThirdItemInLayout3 ? 'span-col-2' : ''}`}
+    //                         onClick={ handleComment }
+    //                     >
+    //                         <img src={img} alt={`post-img-${index}`} />
+                            
+    //                         {/* Overlay hiển thị số ảnh còn lại (+N) */}
+    //                         {isOverlayItem && (
+    //                             <div className="more-overlay">
+    //                                 <span>+{remainingImages}</span>
+    //                             </div>
+    //                         )}
+    //                     </div>
+    //                 );
+    //             })}
+    //         </div>
+    //     );
+    // };
+
     const renderPostImages = () => {
         const images = dataPost?.image_url || [];
         if (images.length === 0) return null;
 
-        // Trường hợp 1 ảnh: Hiển thị full
-        if (images.length === 1) {
-            return <img src={images[0]} 
-                className="image single-image" 
-                alt="post-img" 
-                onClick={ handleComment }
-            />;
-        }
-
-        // Trường hợp nhiều ảnh: Lấy tối đa 4 ảnh để hiển thị
+        // Xử lý logic chia ảnh
         const displayImages = images.slice(0, 4);
-        const remainingImages = images.length - 4; // Số ảnh còn dư nếu > 4
-
-        // Xác định class layout dựa trên số lượng ảnh (2, 3, hoặc 4)
-        // Nếu > 4 ảnh thì layout vẫn giống layout-4 nhưng có thêm xử lý overlay
+        const remainingImages = images.length - 4;
+        
+        // Class layout dựa trên số lượng ảnh thực tế (1, 2, 3, 4)
+        // Nếu chỉ có 1 ảnh -> layout-1 -> ăn CSS đã sửa ở trên
         const layoutClass = `layout-${Math.min(images.length, 4)}`;
 
         return (
             <div className={`image-grid ${layoutClass}`}>
                 {displayImages.map((img, index) => {
-                    // Logic xử lý trường hợp đặc biệt cho layout 3 ảnh:
-                    // Ảnh thứ 3 (index 2) sẽ nằm ở dưới và chiếm toàn bộ chiều rộng (span 2 cột)
+                    // Logic Layout 3: Ảnh thứ 3 (index 2) span 2 cột
                     const isThirdItemInLayout3 = images.length === 3 && index === 2;
                     
-                    // Logic xử lý ảnh thứ 4 khi tổng số ảnh > 4 (Hiển thị overlay số dư)
+                    // Logic Overlay: Ảnh thứ 4 (index 3) hiện số dư
                     const isOverlayItem = index === 3 && remainingImages > 0;
 
                     return (
                         <div 
                             key={index} 
+                            // Thêm class span-col-2 nếu cần
                             className={`grid-item ${isThirdItemInLayout3 ? 'span-col-2' : ''}`}
                             onClick={ handleComment }
                         >
-                            <img src={img} alt={`post-img-${index}`} />
+                            <img src={img} alt={`post-img-${index}`} loading="lazy" />
                             
-                            {/* Overlay hiển thị số ảnh còn lại (+N) */}
                             {isOverlayItem && (
                                 <div className="more-overlay">
                                     <span>+{remainingImages}</span>

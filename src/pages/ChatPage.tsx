@@ -1,13 +1,16 @@
 import { CiSearch } from "react-icons/ci"
 import Header from "../components/layout/Header"
 import { useEffect, useState } from "react";
-import type { typeFriends } from "../types/user";
+import type { typeFriends, typeOnlineUser } from "../types/user";
 import { useAuth } from "../context/useAuth";
 import ChatBox from "../features/chat/components/ChatBox";
+import { io } from "socket.io-client";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
 const PORT = import.meta.env.VITE_API_PORT || '8080';
+
+const SOCKET_URL = `${PROTOCOL}://${HOST}:${PORT}`;
 
 function ChatPage() {
 
@@ -17,6 +20,32 @@ function ChatPage() {
     const [conversationId, setConversationId] = useState<BigInt>();
     const [search, setSearch] = useState<string>("");
     const { user } = useAuth();
+
+    const [onlineUsers, setOnlineUsers] = useState<typeOnlineUser[]>([]);
+    const [socket, setSocket] = useState<any>(null);
+    // const [socket] = useState(() => io(SOCKET_URL));
+
+    useEffect(() => {
+        // 1. Kết nối socket
+        const newSocket = io(SOCKET_URL);
+        setSocket(newSocket);
+
+        // 2. Gửi tín hiệu mình đang online (nếu đã đăng nhập)
+        if (user?.user_id) {
+            newSocket.emit("addNewUser", user.user_id);
+        }
+
+        // 3. Lắng nghe danh sách online từ server trả về
+        newSocket.on("getOnlineUsers", (res: typeOnlineUser[]) => {
+            console.log("Danh sách Online từ Server:", res);
+            setOnlineUsers(res);
+        });
+
+        // 4. Cleanup khi rời trang
+        return () => {
+            newSocket.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -60,7 +89,7 @@ function ChatPage() {
                     'authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    partner_id: partner_id // Ví dụ: friendId là 2
+                    partner_id: partner_id
                 }),
             });
 
@@ -118,12 +147,22 @@ function ChatPage() {
                         <div className="line"></div>
                         {
                             dataFriends?.map(data => {
+                                console.log("Checking User:", data.user_id, "Type:", typeof data.user_id);
+                                const isOnline = onlineUsers.some(
+                                    u => String(u.userId) === String(data.user_id)
+                                );
                                 return (
                                     <div 
                                         className="item"
                                         onClick={ () => openConsersation(data.user_id) }
                                     >
-                                        <img src={`${data.avatar_url}`} className="avatar" />
+                                        {/* <img src={`${data.avatar_url}`} className="avatar" /> */}
+                                        <div className="avatar-wrapper">
+                                            <img src={`${data.avatar_url}`} className="avatar" alt="avatar" />
+                                            {/* Đây là dấu chấm xanh, sau này logic sẽ check điều kiện ở đây để ẩn/hiện */}
+                                            {/* <span className="online-dot"></span> */}
+                                            {isOnline && <span className="online-dot"></span>}
+                                        </div>
                                         <p>{data.display_name}</p>
                                     </div>
                                 )
@@ -137,6 +176,7 @@ function ChatPage() {
                     dataPartner={dataPartner}
                     conversationId={conversationId}
                     setMessages={setMessages}
+                    socket={socket}
                 />
                 {/* <div className="chat-box-container">
                     <div className="chat-box">

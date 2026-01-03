@@ -2,27 +2,29 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/useAuth";
 import { IoMdSend } from "react-icons/io";
 import type { typeFriends } from "../../../types/user";
-import { io } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { BsThreeDots } from "react-icons/bs";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
 const PORT = import.meta.env.VITE_API_PORT || '8080';   
 
-const SOCKET_URL = `${PROTOCOL}://${HOST}:${PORT}`;
+// const SOCKET_URL = `${PROTOCOL}://${HOST}:${PORT}`;
 
 function ChatBox(
     {
         dataMessages,
         dataPartner,
         conversationId,
-        setMessages
+        setMessages,
+        socket
     }:
     {
         dataMessages: any[] | undefined,
         dataPartner: typeFriends | undefined,
         conversationId: BigInt | undefined,
-        setMessages: React.Dispatch<React.SetStateAction<any[] | undefined>>
+        setMessages: React.Dispatch<React.SetStateAction<any[] | undefined>>,
+        socket: Socket
     }
 ) {
 
@@ -30,7 +32,7 @@ function ChatBox(
     const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
 
     const { user } = useAuth();
-    const socket = io(SOCKET_URL);
+    // const socket = io(SOCKET_URL);
 
     // tắt menu
     useEffect(() => {
@@ -49,10 +51,14 @@ function ChatBox(
             // Gửi sự kiện bảo server: "Tôi đang xem phòng này, có tin mới thì báo tôi"
             socket.emit("join_room", conversationId);
         }
-    }, [conversationId]);
+    }, [socket, conversationId]);
 
     // 2. LẮNG NGHE TIN NHẮN MỚI
     useEffect(() => {
+
+        if (!socket) return;
+        console.log('socket');
+
         // Hàm xử lý khi có tin nhắn mới bay về
         const handleNewMessage = (newMessage: any) => {
             if (newMessage.conversation_id === conversationId) {
@@ -73,7 +79,7 @@ function ChatBox(
             socket.off("receive_message", handleNewMessage);
             socket.off("message_deleted", handleMessageDeleted);
         };
-    }, [conversationId]);
+    }, [socket, conversationId]);
 
     const handleDeleteMessage = async (messageId: string) => {
         if (!confirm("Bạn muốn xóa tin nhắn này?")) return;

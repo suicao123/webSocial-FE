@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react"
-import { CiChat1, CiSearch } from "react-icons/ci"
+import { CiChat1 } from "react-icons/ci"
 import { MdHome } from "react-icons/md"
 import { useNavigate } from "react-router"
 import type { payload, typeUser } from "../../types/user";
@@ -73,7 +73,7 @@ function Header(
         <header id="main-header">
             <div className="main-header-left">
                 <div className="avatar-web-header"></div>
-                <div className="input-header">
+                {/* <div className="input-header">
                     <CiSearch 
                         className="icon"
                     />
@@ -81,7 +81,7 @@ function Header(
                         type="text" 
                         placeholder="Tìm kiếm"
                     />
-                </div>
+                </div> */}
             </div>
             <div className="main-header-center">
                 <div 

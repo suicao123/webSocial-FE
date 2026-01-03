@@ -44,3 +44,8 @@ export interface typeViewListData {
     posts?: number;
     friends?: number;
 }
+
+export interface typeOnlineUser {
+    userId: string;
+    socketId: string;
+}

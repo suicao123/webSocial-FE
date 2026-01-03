@@ -231,7 +231,7 @@ html, body {
             height: 39px;
             margin: 8px 20px;
             border-radius: 50%;
-            background-image: url('https://res.cloudinary.com/dd0yqxowo/image/upload/v1761822352/icon_npkjpb.webp');
+            background-image: url('https://res.cloudinary.com/dd0yqxowo/image/upload/v1767275152/logo1_u7hvtf.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -628,20 +628,33 @@ html, body {
 
         // 1. Trường hợp 1 ảnh duy nhất
         .image-grid.layout-1 {
-            display: block;
+            display: flex; // Dùng flex để căn chỉnh dễ hơn
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            height: auto;
-            
+            height: auto; // Chiều cao tự động theo ảnh
+            max-height: 600px; // Giới hạn chiều cao tối đa để không chiếm hết màn hình (giống Facebook)
+            overflow: hidden; // Ẩn phần thừa nếu có
+            background-color: #f0f2f5; // Màu nền nhẹ nếu ảnh đang load hoặc lỗi
+            border: 1px solid #e0e0e0; // Viền nhẹ cho đẹp (tuỳ chọn)
+            border-radius: 8px;
+
             .grid-item {
                 width: 100%;
-                // Giới hạn chiều cao ảnh đơn để không bị quá dài chiếm hết màn hình
-                max-height: 600px; 
-                
+                height: 100%;
+                display: flex;
+                justify-content: center;
+
                 img {
                     width: 100%;
                     height: 100%;
-                    object-fit: cover;
-                    display: block;
+                    // QUAN TRỌNG: 
+                    // object-fit: contain; -> Hiển thị toàn bộ ảnh, có khoảng trắng nếu tỷ lệ không khớp
+                    // object-fit: cover;   -> Lấp đầy khung, có thể bị cắt (crop) 1 chút
+                    // Với ảnh đơn, thường dùng 'contain' nếu muốn xem full, hoặc 'cover' nếu muốn đẹp.
+                    // Ở đây mình để cover nhưng kết hợp max-height ở trên để hạn chế cắt quá nhiều.
+                    object-fit: contain; 
+                    max-height: 600px; // Đảm bảo ảnh không vượt quá khung chứa
                 }
             }
         }
@@ -2955,14 +2968,46 @@ html, body {
                     display: flex;
                     align-items: center;
 
-                    .avatar {
-                        background-size: cover;
-                        background-repeat: no-repeat;
-                        background-position: center;
-                        width: 50px;
-                        height: 50x;
-                        border-radius: 50%;
-                        margin: 12px;
+                    // .avatar {
+                    //     background-size: cover;
+                    //     background-repeat: no-repeat;
+                    //     background-position: center;
+                    //     width: 50px;
+                    //     height: 50x;
+                    //     border-radius: 50%;
+                    //     margin: 12px;
+                    // }
+
+                    .avatar-wrapper {
+                        position: relative; // Để làm điểm neo cho dấu chấm
+                        margin: 12px; // Chuyển margin từ avatar sang wrapper để giữ khoảng cách cũ
+                        display: flex; // Để căn chỉnh ảnh chuẩn
+
+                        .avatar {
+                            // CSS cũ của bạn giữ nguyên, nhưng BỎ margin đi vì đã set ở wrapper
+                            background-size: cover;
+                            background-repeat: no-repeat;
+                            background-position: center;
+                            width: 50px;
+                            height: 50px; // Sửa lỗi typo '50x' thành '50px'
+                            border-radius: 50%;
+                            // margin: 12px; <--- XÓA DÒNG NÀY
+                            object-fit: cover; // Thêm dòng này để ảnh không bị méo
+                        }
+
+                        .online-dot {
+                            width: 12px; // Kích thước dấu chấm
+                            height: 12px;
+                            background-color: #31a24c; // Mã màu xanh lá chuẩn Facebook
+                            border-radius: 50%; // Bo tròn thành hình tròn
+                            
+                            position: absolute; // Căn vị trí tuyệt đối
+                            bottom: 2px; // Cách đáy 2px
+                            right: 2px;  // Cách phải 2px (góc 4h của avatar)
+                            
+                            border: 2px solid #fff; // Viền trắng để tách biệt với avatar (giống FB)
+                            z-index: 1;
+                        }
                     }
 
                     &:hover {

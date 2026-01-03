@@ -48,7 +48,6 @@ function SignupForm(
                 username: username,
                 password: password,
                 display_name: fullname,
-                email: "", 
                 role_id: 1,
                 bio: "", 
             };

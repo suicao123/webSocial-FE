@@ -13,11 +13,11 @@ function SignUpAdmin() {
     const [selectedFile, setSelectedFile] = useState<File>();
     const [previewUrl, setPreviewUrl] = useState<string>("https://res.cloudinary.com/dd0yqxowo/image/upload/v1761823049/user-default_jxnvbw.jpg"); 
     
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [passwordA, setPasswordA] = useState("");
-    const [displayName, setDisplayName] = useState("");
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [passwordA, setPasswordA] = useState<string>("");
+    const [displayName, setDisplayName] = useState<string>("");
+    const [email, setEmail] = useState<string | undefined>(undefined);
 
     const [errors, setErrors] = useState<SignUpErrors>({});
 
