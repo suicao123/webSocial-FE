@@ -1,26 +1,27 @@
 
 @use 'sass:color';
+@use './variables' as *;
 
-$text-color: #333;
-$black-color: #000;
-$border-color: #ccc;
-$placeholder-color: #aaa;
-$valid-color: #00bfff;
-$white-color: #fff;
-$error-color: red;
-$background-color: #00C4FF;
-$gray-color: #F5F5F5;
-$input-color: #F0F2F5;
-$bg-input: #F0F2F5;
-$primary-color: #00B4D8;
-$gray-text: #65676b;
-$overlay-bg: rgba(0, 0, 0, 0.5);
-$danger-color: #ef4444;
+// $text-color: #333;
+// $black-color: #000;
+// $border-color: #ccc;
+// $placeholder-color: #aaa;
+// $valid-color: #00bfff;
+// $white-color: #fff;
+// $error-color: red;
+// $background-color: #00C4FF;
+// $gray-color: #F5F5F5;
+// $input-color: #F0F2F5;
+// $bg-input: #F0F2F5;
+// $primary-color: #00B4D8;
+// $gray-text: #65676b;
+// $overlay-bg: rgba(0, 0, 0, 0.5);
+// $danger-color: #ef4444;
 
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* <-- THÊM DÒNG NÀY */
+    box-sizing: border-box;
     font-family: sans-serif;
 }
 
@@ -2082,6 +2083,37 @@ html, body {
 
                         &.email-cell { color: #555; }
 
+                        &.status-cell {
+                            .status-badge {
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 6px;
+                                padding: 6px 12px;
+                                border-radius: 20px;
+                                font-size: 13px;
+                                font-weight: 600;
+                                white-space: nowrap;
+
+                                svg {
+                                    font-size: 10px;
+                                }
+
+                                &.active {
+                                    background-color: #e6f4ea;
+                                    color: #2e7d32;
+                                    
+                                    svg {
+                                        font-size: 8px;
+                                    }
+                                }
+
+                                &.locked {
+                                    background-color: #fce8e6;
+                                    color: #c62828;
+                                }
+                            }
+                        }
+
                         &.stats-cell {
                             font-weight: 500;
                             color: #444;
@@ -2095,6 +2127,10 @@ html, body {
                         &.date-cell {
                             color: #666;
                             font-size: 13px;
+                        }
+
+                        &.action-cell {
+                            color: $text-color;
                         }
 
                         .action-cell {
@@ -2123,6 +2159,11 @@ html, body {
                                 &.delete:hover {
                                     background-color: #fee2e2;
                                     color: #ef4444; 
+                                }
+
+                                &.lock:hover {
+                                    background-color: #fff7ee;
+                                    color: #e17777; 
                                 }
                             }
                         }

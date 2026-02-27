@@ -6,6 +6,8 @@ import HomeComment from "../../home/components/HomeComment";
 import type { typeUser } from "../../../types/user";
 import { useAuth } from "../../../context/useAuth";
 import EditPost from "./EditPost";
+import ToastMessage from "../../../components/common/ToastMessage";
+import ConfirmModal from "../../../components/common/ConfirmModal";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -20,6 +22,17 @@ function AdminPosts() {
     const [isEditing, setEditing] = useState<boolean>(false);
     const [search, setSearch] = useState<string>('');
     const { user } = useAuth();
+
+    const [toast, setToast] = useState({ isOpen: false, message: '', type: 'success' as 'success' | 'error' });
+    const [confirmConfig, setConfirmConfig] = useState({
+        isOpen: false,
+        actionType: null as  'delete' | 'unlock' | null,
+        postId: 0 as number,
+        title: '',
+        message: '',
+        confirmText: '',
+        variant: 'primary' as 'primary' | 'danger'
+    });
 
     const [refreshKey, setRefreshKey] = useState<number>(0);
 
@@ -89,10 +102,19 @@ function AdminPosts() {
         setCommenting(prev => !prev);
     }
 
-    async function handleDelete(id: string) {
-        if (!window.confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
-            return;
-        }
+    const requestDelete = (postId: number) => {
+        setConfirmConfig({
+            isOpen: true,
+            actionType: 'delete',
+            postId: postId,
+            title: 'Xóa bài viết',
+            message: 'Bạn có chắc chắn muốn xóa bài viết này không?',
+            confirmText: 'Xóa',
+            variant: 'danger'
+        });
+    };
+
+    async function handleDelete(id: number) {
         try {
             const token = localStorage.getItem('authToken');
             const response = await fetch(`${PROTOCOL}://${HOST}:${PORT}/api/v1/posts/delete/${id}`, {
@@ -102,10 +124,14 @@ function AdminPosts() {
                 }
             });
 
+            const data = await response.json();
+
             if(!response.ok) {
-                alert("Xóa bài viết thất bại");
+                // alert("Xóa bài viết thất bại");
+                setToast({ isOpen: true, message: data.message || 'Xóa bài viết thất bại!!!', type: 'error' });
             }
             else {
+                setToast({ isOpen: true, message: data.message || "Xóa bài viết thành công!", type: 'success' });
                 setRefreshKey(prev => prev += 1);
             }
         } catch (error) {
@@ -118,8 +144,30 @@ function AdminPosts() {
         setEditing(prev => !prev);
     }
 
+    const handleConfirmModal = () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false })); 
+
+        handleDelete(confirmConfig.postId);
+    };
+
     return (
         <div className="admin-posts">
+            <ToastMessage
+                isOpen={toast.isOpen}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast({ ...toast, isOpen: false })}
+            />
+
+            <ConfirmModal
+                isOpen={confirmConfig.isOpen}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                confirmText={confirmConfig.confirmText}
+                variant={confirmConfig.variant}
+                onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+                onConfirm={handleConfirmModal}
+            />
             { 
                 isCommenting ? 
                 <HomeComment
@@ -216,7 +264,7 @@ function AdminPosts() {
                                         <button 
                                             className="btn-icon delete" 
                                             title="Xóa bài viết"
-                                            onClick={ () => handleDelete(post.post_id) }
+                                            onClick={ () => requestDelete(Number(post.post_id)) }
                                         >
                                             <FaTrash />
                                         </button>

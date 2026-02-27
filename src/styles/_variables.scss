@@ -1,0 +1,45 @@
+$text-color: #333;
+$black-color: #000;
+$border-color: #ccc;
+$placeholder-color: #aaa;
+$valid-color: #00bfff;
+$white-color: #fff;
+$error-color: red;
+$background-color: #00C4FF;
+$gray-color: #F5F5F5;
+$input-color: #F0F2F5;
+$bg-input: #F0F2F5;
+$primary-color: #00B4D8;
+$gray-text: #65676b;
+$overlay-bg: rgba(0, 0, 0, 0.5);
+$danger-color: #ef4444;
+
+// --- CÁC BIẾN MỚI THÊM VÀO ĐỂ TÁI SỬ DỤNG ---
+
+// Màu hover hàng trong bảng
+$table-hover-bg: #f8f9fa;
+
+// Màu Text cụ thể
+$text-dark: #222;
+$text-muted: #555;
+$text-light: #666;
+$text-stats: #444;
+
+// Màu cho Icon Edit (Màu Cam)
+$edit-color: #f97316;
+$edit-bg-hover: #fff7ed;
+
+// Màu cho Icon Delete (Màu Đỏ nhạt - dùng chung với danger-color cho chữ)
+$danger-bg-hover: #fee2e2;
+
+// Màu cho Icon Lock (Màu Vàng/Cam nhạt)
+$lock-color: #e17777;
+$lock-bg-hover: #fff7ee;
+
+// Màu cho Trạng thái Active (Hoạt động)
+$status-active-color: #2e7d32;
+$status-active-bg: #e6f4ea;
+
+// Màu cho Trạng thái Locked (Bị khóa)
+$status-locked-color: #c62828;
+$status-locked-bg: #fce8e6;

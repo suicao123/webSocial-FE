@@ -1,0 +1,82 @@
+@use '../../styles/variables' as *;
+@use 'sass:color';
+
+.confirm-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: $overlay-bg;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+    animation: fadeIn 0.2s ease-in-out;
+
+    .confirm-modal-content {
+        background-color: $white-color;
+        width: 400px;
+        max-width: 90%;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba($black-color, 0.2);
+        padding: 24px;
+        animation: popUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+        h3 {
+            font-size: 20px;
+            color: $text-color;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 15px;
+            color: $gray-text;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+
+            button {
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-cancel {
+                background-color: $input-color;
+                color: $text-color;
+                &:hover { background-color: color.adjust($input-color, $lightness: -5%); }
+            }
+
+            // Nút dành cho hành động nguy hiểm (Xóa, Khóa)
+            .btn-confirm.danger {
+                background-color: $danger-color; 
+                color: $white-color;
+                &:hover { background-color: color.adjust($danger-color, $lightness: -10%); }
+            }
+
+            // Nút dành cho hành động an toàn (Lưu, Xác nhận)
+            .btn-confirm.primary {
+                background-color: $primary-color; 
+                color: $white-color;
+                &:hover { background-color: color.adjust($primary-color, $lightness: -10%); }
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popUp {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

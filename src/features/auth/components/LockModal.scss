@@ -1,0 +1,94 @@
+
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+/* Lớp phủ đen mờ toàn màn hình */
+.modal-overlay {
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0;
+    background-color: $overlay-bg; // Sử dụng biến nền mờ
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; 
+
+    /* Hộp thoại thông báo nằm giữa */
+    .modal-content {
+        background: $white-color; // Sử dụng biến màu trắng
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        animation: popUp 0.3s ease-out; 
+
+        /* Vòng tròn chứa Icon cảnh báo */
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            color: $danger-color; // Sử dụng biến màu đỏ báo lỗi
+            background: rgba($danger-color, 0.15); // Tạo màu nền đỏ nhạt tự động từ biến gốc
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            svg { 
+                width: 30px; 
+                height: 30px; 
+            }
+        }
+
+        /* Tiêu đề "Tài Khoản Bị Khóa" */
+        .modal-title {
+            margin: 0 0 10px;
+            color: $text-color; // Sử dụng biến màu chữ chính
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        /* Nội dung chi tiết thời gian bị khóa */
+        .modal-message {
+            color: $gray-text; // Sử dụng biến màu chữ xám
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* Nút bấm xác nhận */
+        .modal-btn {
+            background-color: $danger-color; // Sử dụng biến màu đỏ
+            color: $white-color;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.2s ease;
+
+            &:hover { 
+                // Tự động làm đậm màu đỏ lên 10% khi hover
+                background-color: color.adjust($danger-color, $lightness: -10%); 
+            }
+        }
+    }
+}
+
+/* Định nghĩa hiệu ứng nảy nhẹ (Pop Up) */
+@keyframes popUp {
+    from { 
+        transform: scale(0.9); 
+        opacity: 0; 
+    }
+    to { 
+        transform: scale(1); 
+        opacity: 1; 
+    }
+}

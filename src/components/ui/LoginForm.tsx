@@ -2,6 +2,7 @@ import { useState } from "react"
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { validateLogin } from "../../validation/auth";
 import { useAuth } from "../../context/useAuth";
+import LockModal from "../../features/auth/components/LockModal";
 
 const PROTOCOL = import.meta.env.VITE_API_PROTOCOL || 'http';
 const HOST = import.meta.env.VITE_API_HOST || 'localhost';
@@ -19,6 +20,8 @@ function LoginForm(
     const [isHidden, setHidden] = useState<boolean>(true);
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [lockMessage, setLockMessage] = useState<string>('');
     const { login } = useAuth();
 
     function handleHiddenPass(): void {
@@ -54,12 +57,18 @@ function LoginForm(
                 });
 
                 const data = await response.json();
+
+                if (response.status === 403) {
+                    setLockMessage(data.message);
+                    setIsModalOpen(true);
+                    return;
+                }
                 
                 // Kiểm tra xem server có báo thành công không
-                if (data.token) {
-                     const { token } = data;
-                     
-                     login(token); 
+                if (response.ok) {
+                    const { token } = data;
+                    
+                    login(token); 
                 } else {
                     alert(data.message || "Đăng nhập thất bại");
                 }
@@ -129,6 +138,12 @@ function LoginForm(
                     </div>
                 </div>
             </form>
+
+            <LockModal
+                isOpen={isModalOpen} 
+                message={lockMessage} 
+                onClose={() => setIsModalOpen(false)} 
+            />
         </div>
     )
 }

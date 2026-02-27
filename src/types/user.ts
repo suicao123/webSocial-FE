@@ -49,3 +49,9 @@ export interface typeOnlineUser {
     userId: string;
     socketId: string;
 }
+
+export interface LockModalProps {
+    isOpen: boolean;
+    message?: string;
+    onClose: () => void;
+}
