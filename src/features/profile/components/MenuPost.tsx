@@ -2,6 +2,7 @@ import { memo } from "react"
 import PostComposer from "../../../components/ui/posts/PostComposer"
 import type { typePost } from "../../../types/post"
 import Post from "../../../components/ui/posts/Post"
+import type { typeUser } from "../../../types/user"
 
 function MenuPost(
     { 
@@ -9,14 +10,16 @@ function MenuPost(
         dataPosts,
         setCommenting,
         setPost,
-        setRefreshKey
+        setRefreshKey,
+        dataUser
     } : 
     { 
         setPosting: React.Dispatch<React.SetStateAction<boolean>>,
         dataPosts: typePost[],
         setCommenting: React.Dispatch<React.SetStateAction<boolean>>,
         setPost: React.Dispatch<React.SetStateAction<typePost | undefined>>,
-        setRefreshKey: React.Dispatch<React.SetStateAction<number>>
+        setRefreshKey: React.Dispatch<React.SetStateAction<number>>,
+        dataUser: typeUser | undefined
     } 
 ) {
     
@@ -26,8 +29,9 @@ function MenuPost(
     return (
         <div className="profile-container">
             <div className="profile-container-main">
-                <PostComposer 
+                <PostComposer
                     setPosting={setPosting}
+                    dataUser={dataUser}
                 />
                 {
                     dataPosts.map(data => {
