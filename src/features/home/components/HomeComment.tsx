@@ -34,6 +34,11 @@ function HomeComment(
     const [dataComments, setComments] = useState<typeComment[]>([]);
     const [commentValue, setCommentValue] = useState<string>('');
     const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+    const [replyingTo, setReplyingTo] = useState<{
+        parent_comment_id: string;
+        reply_to_user_id: string;
+        reply_to_display_name: string;
+    } | null>(null);
     const { user } = useAuth();
     let token: string | null = '';
 
@@ -125,9 +130,27 @@ function HomeComment(
 
         // Thêm
         newSocket.on("new_comment_created", (newComment: typeComment) => {
-            console.log("Socket nhận comment mới:", newComment);
+            // console.log("Socket nhận comment mới:", newComment);
             
             setComments((prev) => {
+                // Nếu comment mới là một câu trả lời (có parent_id)
+                if (newComment.parent_comment_id) {
+                    // Tìm vị trí của bình luận cha
+                    const parentIndex = prev.findIndex(c => c.comment_id?.toString() === newComment.parent_comment_id?.toString());
+                    
+                    if (parentIndex !== -1) {
+                        // Tính toán nhét reply mới xuống dưới cùng của danh sách reply cũ của cha này
+                        let insertIndex = parentIndex + 1;
+                        while(insertIndex < prev.length && prev[insertIndex].parent_comment_id?.toString() === newComment.parent_comment_id?.toString()) {
+                            insertIndex++;
+                        }
+                        const newArray = [...prev];
+                        newArray.splice(insertIndex, 0, newComment);
+                        return newArray;
+                    }
+                }
+                
+                // Nếu là comment gốc, cứ đẩy lên đầu mảng
                 return [newComment, ...prev];
             });
         });
@@ -179,7 +202,10 @@ function HomeComment(
                 body: JSON.stringify({
                     post_id: post_id,
                     content: content,
-                    user_id: user_id
+                    user_id: user_id,
+                    // Dữ liệu reply gửi xuống BE
+                    parent_comment_id: replyingTo ? replyingTo.parent_comment_id : null,
+                    reply_to_user_id: replyingTo ? replyingTo.reply_to_user_id : null
                 })
             })
 
@@ -187,23 +213,23 @@ function HomeComment(
             
 
             if (!comment.ok) {
-                alert('Đăng bài thất bại!!');
+                alert('Bình luận thất bại!!');
             }
 
         } catch (error) {
             alert('Bình luận thất bại!!!');
         } finally {
             setCommentValue('');
+            setReplyingTo(null);
         }
     }
 
     function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-        if(e.key === 'Enter') {
+        if(e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
 
             if(commentValue !== '') {
                 handleComment();
-                setCommentValue('');
             }
         }
     }
@@ -235,15 +261,29 @@ function HomeComment(
                     <div className="home-comment-content">
                         {
                             dataComments.map(data => {
-                                // FIX 1: Kiểm tra kỹ user_id tồn tại trước khi toString() để tránh crash
+                                //Kiểm tra kỹ user_id tồn tại trước khi toString() để tránh crash
                                 const isMyComment = (user?.user_id && data.user_id) 
                                     ? user.user_id.toString() === data.user_id.toString() 
                                     : false;
 
+                                const isReply = data.parent_comment_id !== null && data.parent_comment_id !== undefined;
+
+                                let repliedName = "Người dùng";
+                                if (data.reply_to_user_id) {
+                                    // Tìm comment của người có ID trùng với reply_to_user_id
+                                    const repliedTarget = dataComments.find(c => c.user_id?.toString() === data.reply_to_user_id?.toString());
+                                    if (repliedTarget && repliedTarget.users?.display_name) {
+                                        repliedName = repliedTarget.users.display_name;
+                                    }
+                                }
+
                                 return (
-                                    // FIX 2: Thêm fallback key nếu comment_id bị thiếu
-                                    <div className="comment" key={data.comment_id ? data.comment_id.toString() : Math.random()}>
-                                        {/* FIX 3: Dùng ?. để an toàn nếu users bị null */}
+                                    //Thêm fallback key nếu comment_id bị thiếu
+                                    <div 
+                                        className="comment" 
+                                        key={data.comment_id ? data.comment_id.toString() : Math.random()}
+                                        style={{ marginLeft: isReply ? '45px' : '0px' }}
+                                    >
                                         <img 
                                             src={data.users?.avatar_url || "https://via.placeholder.com/50"} 
                                             className="avatar-post-header" 
@@ -251,12 +291,39 @@ function HomeComment(
                                         />
                                         
                                         <div className="comment-wrapper">
-                                            <div className="comment-data">
-                                                <div className="data">
-                                                    {/* FIX 4: Dùng ?. cho display_name */}
-                                                    <p>{data.users?.display_name || "Người dùng"}</p>
-                                                    <p>{data.content}</p>
+                                            <div className="comment-body">
+                                                <div className="comment-data">
+                                                    <div className="data">
+                                                        <p>{data.users?.display_name || "Người dùng"}</p>
+                                                        {/* <p>{data.content}</p> */}
+                                                        <p>
+                                                            {/* HIỂN THỊ @TÊN NGƯỜI ĐƯỢC TRẢ LỜI */}
+                                                            {data.reply_to_user_id && (
+                                                                <span style={{color: '#1877f2', fontWeight: 'bold', marginRight: '6px'}}>
+                                                                    @{repliedName}
+                                                                </span>
+                                                            )}
+                                                            {data.content}
+                                                        </p>
+                                                    </div>
                                                 </div>
+                                                
+                                                {/* NÚT TRẢ LỜI MỚI */}
+                                                <span 
+                                                    className="reply-btn"
+                                                    onClick={() => {
+                                                        // Bắt logic: Trả lời vào comment để lồng 1 cấp
+                                                        const parentId = data.parent_comment_id ? data.parent_comment_id : data.comment_id;
+                                                        
+                                                        setReplyingTo({
+                                                            parent_comment_id: parentId!.toString(),
+                                                            reply_to_user_id: data.user_id.toString(),
+                                                            reply_to_display_name: data.users?.display_name || "Người dùng"
+                                                        });
+                                                    }}
+                                                >
+                                                    Trả lời
+                                                </span>
                                             </div>
                                             
                                             {isMyComment && (
@@ -298,19 +365,29 @@ function HomeComment(
                 <div className="line"></div>
 
                 <div className="home-comment-footer">
-                    <img src={dataUser?.avatar_url || ""} className="avatar-post-header" />
-                    <div className="home-comment-footer-content">
-                        <textarea 
-                            placeholder="Viết bình luận"
-                            value={commentValue}
-                            onChange={(e) => setCommentValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                        />
-                        <IoMdSend
-                            className="icon"
-                            size={22}
-                            onClick={handleComment}
-                        />
+                    {/* THANH TRẠNG THÁI UI MỚI */}
+                    {replyingTo && (
+                        <div className="reply-indicator">
+                            Đang trả lời <strong>{replyingTo.reply_to_display_name}</strong>
+                            <span className="cancel-reply" onClick={() => setReplyingTo(null)}>Hủy</span>
+                        </div>
+                    )}
+
+                    <div className="input-wrapper">
+                        <img src={dataUser?.avatar_url || ""} className="avatar-post-header" alt="avatar" />
+                        <div className="home-comment-footer-content">
+                            <textarea 
+                                placeholder="Viết bình luận..."
+                                value={commentValue}
+                                onChange={(e) => setCommentValue(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
+                            <IoMdSend
+                                className="icon"
+                                size={22}
+                                onClick={handleComment}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

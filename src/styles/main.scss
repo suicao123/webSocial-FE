@@ -210,6 +210,62 @@ html, body {
     }
 }
 
+/* Màn hình nhỏ hơn 992px (Tablet / iPad) */
+@media (max-width: 992px) {
+    #auth-container-nav {
+        width: 90%; 
+        height: auto; /* Bỏ chiều cao cố định 550px để khung tự giãn */
+        min-height: 600px; /* Tăng chiều cao tối thiểu lên một chút */
+    }
+
+    .auth-container-nav-img {
+        display: none; /* Ẩn ảnh nền bên phải */
+    }
+
+    .auth-container-nav-form {
+        flex: 1; 
+        padding: 60px 0; /* Dùng padding đẩy trên dưới để khung trắng cao lên tự nhiên */
+    }
+
+    .auth-container-nav-form-auth {
+        width: 85%; 
+        height: auto; /* Sửa từ 100% thành auto để ôm sát số lượng input (Login/Signup) */
+    }
+}
+
+/* Màn hình nhỏ hơn 480px (Điện thoại di động) */
+@media (max-width: 480px) {
+    #auth-container-nav {
+        width: 95%; 
+        min-height: fit-content; 
+    }
+
+    .auth-container-nav-form {
+        padding: 50px 0; 
+    }
+
+    .auth-container-nav-form-auth {
+        width: 90%; 
+
+        form {
+            .button {
+                flex-direction: column; 
+                gap: 16px;
+
+                .button-left, 
+                .button-right {
+                    flex: none;
+                    width: 100%; 
+                    height: 38px;
+                    font-size: 18px;
+                    font-weight: 600;
+                    border-radius: 25px;
+                }
+            }
+        }
+    }
+}
+
 //Home page--------------------------------------------------------------------------------------------------------
 //header
 #main-header {
@@ -372,6 +428,72 @@ html, body {
                 cursor: pointer;
                 opacity: 0.6;
             }
+        }
+    }
+}
+
+/* Breakpoint 1: Màn hình Tablet & Laptop nhỏ (Dưới 992px) */
+@media (max-width: 992px) {
+    #main-header {
+        .main-header-center {
+            .icon-main-header-center {
+                width: 80px; /* Thu nhỏ các nút tab ở giữa */
+            }
+        }
+    }
+}
+
+/* Breakpoint 2: Màn hình điện thoại di động (Dưới 576px) */
+@media (max-width: 576px) {
+    #main-header {
+        /* Bỏ thiết lập flex: 1 ở 2 bên để ưu tiên không gian cho phần Center (các tab) */
+        
+        .main-header-left {
+            flex: none; 
+            
+            .avatar-web-header {
+                margin: 8px 15px; /* Giảm khoảng cách lề bên trái */
+            }
+        }
+
+        .main-header-center {
+            flex: 1; /* Cho phép phần giữa chiếm hết khoảng trống còn lại */
+            gap: 0;
+            
+            .icon-main-header-center {
+                width: 55px; /* Thu hẹp tối đa chiều rộng nút tab */
+                height: 44px; /* Giảm chiều cao xuống một chút cho thanh thoát */
+                margin: 0 4px; /* Các nút đứng sát nhau hơn */
+
+                .icon {
+                    font-size: 24px; /* Icon nhỏ lại một chút để cân đối với khung mới */
+                }
+            }
+        }
+
+        .main-header-right {
+            flex: none;
+            
+            .avatar-user-header {
+                margin: 8px 15px 8px 0; /* Giảm khoảng cách lề bên phải */
+            }
+
+            .main-header-menu {
+                width: 200px; /* Menu Đăng xuất nhỏ lại tránh tràn khỏi màn hình đt */
+                right: 15px; /* Ép sát menu vào lề phải */
+                bottom: -45px;
+            }
+        }
+    }
+}
+
+/* Breakpoint 3: Điện thoại siêu nhỏ (iPhone SE - dưới 400px) */
+@media (max-width: 400px) {
+    #main-header {
+        .main-header-left .avatar-web-header { margin: 8px 10px; }
+        .main-header-right .avatar-user-header { margin: 8px 10px 8px 0; }
+        .main-header-center .icon-main-header-center {
+            width: 48px; /* Ép nhỏ nút tab thêm xíu nữa để không bị vỡ khung */
         }
     }
 }
@@ -669,14 +791,11 @@ html, body {
             border-radius: 8px;
             overflow: hidden;
 
-            // --- CẬP NHẬT BLOCK NÀY ---
             .grid-item {
                 position: relative;
                 width: 100%;
                 height: 100%;
-                overflow: hidden; // Quan trọng: Ẩn phần ảnh bị zoom tràn ra ngoài khung
-                
-                // 1. Báo hiệu là có thể click được
+                overflow: hidden;
                 cursor: pointer; 
 
                 img {
@@ -685,18 +804,15 @@ html, body {
                     object-fit: cover;
                     display: block;
                     
-                    // 2. Thiết lập chuyển động mượt mà cho hiệu ứng transform và filter
                     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.4s ease;
                     // (Dùng cubic-bezier giúp hiệu ứng zoom có cảm giác "lực" hơn một chút)
                 }
 
-                // 3. Trạng thái HOVER
-                // Khi di chuột vào .grid-item, thì cái thẻ img bên trong nó sẽ thay đổi
                 &:hover {
                     img {
                         // Zoom ảnh lên 1 chút (105%)
                         transform: scale(1.05);
-                        // Làm tối ảnh đi 1 xíu để tạo điểm nhấn (tuỳ chọn, nếu không thích thì bỏ dòng này)
+                        // Làm tối ảnh đi 1 xíu
                         filter: brightness(90%);
                     }
                 }
@@ -786,6 +902,107 @@ html, body {
             &:hover {
                 cursor: pointer;
                 background-color: color.adjust($input-color, $lightness: -3%);
+            }
+        }
+    }
+}
+
+/* =========================================
+   RESPONSIVE CHO TRANG HOME & POST
+   ========================================= */
+
+/* Màn hình dưới 1200px (Laptop nhỏ, Tablet ngang) */
+@media (max-width: 1200px) {
+    #main-layout-home {
+        /* Ẩn cột phải, giữ lại cột trái và giữa */
+        grid-template-columns: 280px 1fr;
+        gap: 30px; /* Thu hẹp khoảng cách */
+
+        .main-layout-home-right {
+            display: none;
+        }
+    }
+}
+
+/* Màn hình dưới 1025px (Tablet dọc, iPad) */
+@media (max-width: 1025px) {
+    #main-layout-home {
+        /* Chỉ giữ lại cột bảng tin (Center) */
+        grid-template-columns: 1fr;
+        max-width: 680px; /* Khóa độ rộng tối đa để bài viết không bị dãn quá to */
+        margin: 20px auto 0; /* Căn giữa màn hình */
+
+        .main-layout-home-left {
+            display: none; /* Ẩn cột trái */
+        }
+    }
+}
+
+/* Màn hình dưới 576px (Điện thoại di động) */
+@media (max-width: 576px) {
+    #main-layout-home {
+        max-width: 100%;
+        margin: 10px 0 0; /* Xóa lề 2 bên để tràn viền */
+        gap: 12px; /* Khoảng cách giữa các bài viết gần lại một chút */
+    }
+
+    /* ---- Responsive cho Post Composer ---- */
+    #post-composer {
+        border-radius: 0; /* Xóa bo góc để sát mép màn hình */
+        height: auto;
+        min-height: 70px;
+        
+        .avatar-post-composer {
+            margin: 15px 0 15px 15px; /* Chỉnh lại margin cho cân đối */
+        }
+
+        .input-post-composer {
+            margin: 15px 15px 15px 0;
+            height: 40px; 
+            p {
+                font-size: 100%; /* Thu nhỏ chữ placeholder */
+            }
+        }
+    }
+
+    /* ---- Responsive cho Bài viết (Post) ---- */
+    #post {
+        border-radius: 0; /* Xóa bo góc, bài viết tràn sát viền màn hình (giống app thật) */
+
+        .post-content {
+            /* Tùy chỉnh lại khung ảnh để nó tràn viền trên mobile */
+            .image-grid.layout-1 {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                max-height: 450px; /* Giảm chiều cao tối đa của ảnh trên mobile */
+                
+                .grid-item img {
+                    max-height: 450px;
+                }
+            }
+
+            .image-grid:not(.layout-1) {
+                border-radius: 0; /* Bỏ bo góc grid nhiều ảnh */
+            }
+        }
+
+        /* Tùy chỉnh khu vực tương tác (Thích/Bình luận) */
+        .post-interact {
+            margin: 5px 15px 10px; /* Thu gọn margin lại một chút */
+            gap: 5px; 
+
+            .post-interact-like, 
+            .post-interact-comment {
+                height: 36px; /* Giảm chiều cao xuống cho thanh thoát */
+                border-radius: 8px; /* Bo góc nhẹ thay vì tròn xoe */
+                background-color: transparent; /* Bỏ nền xám mặc định đi để nhìn đỡ thô */
+                font-size: 14px; /* Thu nhỏ chữ lại một xíu */
+
+                /* Chỉ hiện nền xám khi người dùng thực sự chạm/bấm vào nút */
+                &:active {
+                    background-color: #f0f2f5; 
+                }
             }
         }
     }
@@ -1086,29 +1303,77 @@ html, body {
                     
                     // Wrapper bao gồm cả bong bóng chat và nút 3 chấm
                     .comment-wrapper {
+                        // display: flex;
+                        // align-items: center;
+                        // gap: 10px;
+                        // max-width: 90%;
+                        // position: relative; // Để định vị menu dropdown
+
+                        // .comment-data {
+                        //     display: flex;
+                        //     overflow-wrap: break-word; // Fix text dài bị tràn
+                        //     word-break: break-word;
+                        //     flex-direction: column;
+                        //     background-color: $input-color;
+                        //     border-radius: 18px;
+                        //     padding: 8px 12px; // Padding cho bong bóng chat đẹp hơn
+
+                        //     .data {
+                        //         margin: 0;
+                        //         font-size: 15px; // Font chữ nội dung vừa phải
+
+                        //         p:first-child {
+                        //             font-size: 13px;
+                        //             font-weight: bold;
+                        //             margin-bottom: 4px;
+                        //         }
+                        //     }
+                        // }
+
                         display: flex;
-                        align-items: center;
+                        align-items: flex-start;
                         gap: 10px;
                         max-width: 90%;
-                        position: relative; // Để định vị menu dropdown
+                        position: relative; 
 
-                        .comment-data {
+                        .comment-body {
                             display: flex;
-                            overflow-wrap: break-word; // Fix text dài bị tràn
-                            word-break: break-word;
                             flex-direction: column;
-                            background-color: $input-color;
-                            border-radius: 18px;
-                            padding: 8px 12px; // Padding cho bong bóng chat đẹp hơn
+                            gap: 4px;
 
-                            .data {
-                                margin: 0;
-                                font-size: 15px; // Font chữ nội dung vừa phải
+                            .comment-data {
+                                display: flex;
+                                overflow-wrap: break-word; 
+                                word-break: break-word;
+                                flex-direction: column;
+                                background-color: $input-color; // Dùng biến input-color
+                                border-radius: 18px;
+                                padding: 8px 12px; 
 
-                                p:first-child {
-                                    font-size: 13px;
-                                    font-weight: bold;
-                                    margin-bottom: 4px;
+                                .data {
+                                    margin: 0;
+                                    font-size: 15px; 
+                                    color: $text-dark; // Màu chữ tối
+
+                                    p:first-child {
+                                        font-size: 13px;
+                                        font-weight: bold;
+                                        margin-bottom: 4px;
+                                        color: $black-color; // Tên người dùng màu đen đậm
+                                    }
+                                }
+                            }
+
+                            .reply-btn {
+                                margin-left: 12px;
+                                font-size: 12px;
+                                font-weight: bold;
+                                color: $gray-text; // Dùng biến gray-text
+                                cursor: pointer;
+                                transition: 0.2s;
+
+                                &:hover {
+                                    text-decoration: underline;
                                 }
                             }
                         }
@@ -1172,45 +1437,118 @@ html, body {
             }
         }
 
+        // .home-comment-footer {
+        //     display: flex;
+        //     margin: 10px 0;
+        //     justify-content: center;
+        //     gap: 8px;
+
+        //     img {
+        //         width: 30px;
+        //         height: 30px;
+                
+        //         // Sửa ở đây: Dùng object-fit cho thẻ <img>
+        //         object-fit: cover; 
+                
+        //         // Thêm cái này để làm tròn avatar
+        //         border-radius: 50%;
+        //     }
+
+        //     .home-comment-footer-content {
+        //         width: 88%;
+        //         background-color: $input-color;
+        //         border-radius: 20px;
+        //         display: flex;
+
+        //         textarea {
+        //             margin: 12px;
+        //             width: 90%;
+        //             border: none;
+        //             outline: none;
+        //             background-color: $input-color;
+        //             font-size: 18px;
+        //             resize: none;
+        //         }
+
+        //         .icon {
+        //             margin: 6px auto 0;
+
+        //             &:hover {
+        //                 cursor: pointer;
+        //                 opacity: 0.6;
+        //             }
+        //         }
+        //     }
+        // }
+
         .home-comment-footer {
             display: flex;
-            margin: 10px 0;
-            justify-content: center;
+            flex-direction: column; 
+            margin: 10px 20px; 
             gap: 8px;
 
-            img {
-                width: 30px;
-                height: 30px;
-                
-                // Sửa ở đây: Dùng object-fit cho thẻ <img>
-                object-fit: cover; 
-                
-                // Thêm cái này để làm tròn avatar
-                border-radius: 50%;
+            .reply-indicator {
+                font-size: 13px;
+                color: $gray-text; // Dùng biến gray-text
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-left: 45px; 
+
+                .cancel-reply {
+                    color: $danger-color; // Dùng màu đỏ danger cho nút hủy để người dùng dễ chú ý
+                    font-weight: bold;
+                    cursor: pointer;
+                    
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
             }
 
-            .home-comment-footer-content {
-                width: 88%;
-                background-color: $input-color;
-                border-radius: 20px;
+            .input-wrapper {
                 display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
 
-                textarea {
-                    margin: 12px;
-                    width: 90%;
-                    border: none;
-                    outline: none;
-                    background-color: $input-color;
-                    font-size: 18px;
-                    resize: none;
+                img {
+                    width: 30px;
+                    height: 30px;
+                    object-fit: cover; 
+                    border-radius: 50%;
                 }
 
-                .icon {
-                    margin: 6px auto 0;
+                .home-comment-footer-content {
+                    flex: 1; 
+                    background-color: $input-color; // Dùng biến input-color
+                    border-radius: 20px;
+                    display: flex;
+                    align-items: center; 
+                    padding-right: 12px;
 
-                    &:hover {
-                        cursor: pointer;
-                        opacity: 0.6;
+                    textarea {
+                        margin: 12px;
+                        width: 100%;
+                        border: none;
+                        outline: none;
+                        background-color: transparent; 
+                        color: $text-color;
+                        font-size: 15px; 
+                        resize: none;
+                        height: 20px; 
+
+                        &::placeholder {
+                            color: $placeholder-color; // Dùng biến placeholder
+                        }
+                    }
+
+                    .icon {
+                        color: $blue-color; // Dùng biến blue vừa tạo (hoặc thay bằng $primary-color)
+                        &:hover {
+                            cursor: pointer;
+                            opacity: 0.8;
+                        }
                     }
                 }
             }
@@ -1651,7 +1989,7 @@ html, body {
             display: flex;
             align-items: center;
             gap: 16px;
-            font-size: 18x;
+            font-size: 18px;
             border-radius: 10px;
             padding: 0 12px;
 

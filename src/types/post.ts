@@ -42,4 +42,6 @@ export interface typeComment {
     content: string;
     users: commentAuthor;
     created_at?: string;
+    parent_comment_id?: string | null;
+    reply_to_user_id?: string | null;
 }

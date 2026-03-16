@@ -40,7 +40,12 @@ function SignupForm(
     }
 
     async function handleSignup() {
-        setError(Object.keys(validateSignup(username, fullname, password, password)).length > 0);
+        const hasError = Object.keys(validateSignup(username, fullname, password, password)).length > 0;
+        setError(hasError);
+
+        if(hasError) {
+            return
+        }
 
         try {
             // 2. Chuẩn bị dữ liệu gửi lên Server

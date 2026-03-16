@@ -7,7 +7,7 @@ import AdminPage from "./AdminPage";
 function HomePage() {
 
     const { role, isAuthenticated, isLoading } = useAuth();
-    console.log(isAuthenticated);
+    // console.log(isAuthenticated);
     
     if (isLoading) {
         return <div className="loading-screen">Đang tải...</div>; 
